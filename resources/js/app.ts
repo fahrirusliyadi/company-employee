@@ -2,11 +2,18 @@ import '../css/app.css';
 import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/vue3';
+import { message } from 'ant-design-vue';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+// Configure Ant Design message globally
+message.config({
+    top: '20px',
+    duration: 5,
+});
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

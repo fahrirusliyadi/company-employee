@@ -19,5 +19,27 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Handle custom application exceptions
+        $exceptions->render(function (\App\Exceptions\ApplicationException $e, \Illuminate\Http\Request $request) {
+            return $e->render($request);
+        });
+
+        // Handle validation exceptions for Inertia requests
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, \Illuminate\Http\Request $request) {
+            if ($request->header('X-Inertia')) {
+                return redirect()->back()
+                    ->with('error', 'Please check the form for errors and try again.')
+                    ->withErrors($e->errors())
+                    ->withInput();
+            }
+        });
+
+        // Handle general exceptions for Inertia requests
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
+            if ($request->header('X-Inertia') && !($e instanceof \Illuminate\Validation\ValidationException)) {
+                return redirect()->back()
+                    ->with('error', 'An unexpected error occurred. Please try again.')
+                    ->withInput();
+            }
+        });
     })->create();

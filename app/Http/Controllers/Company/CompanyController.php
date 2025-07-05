@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Http\Requests\Company\CompanyIndexRequest;
 use App\Http\Requests\Company\CompanyStoreRequest;
 use App\Http\Requests\Company\CompanyUpdateRequest;
+use App\Exceptions\ApplicationException;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -62,19 +63,24 @@ class CompanyController extends Controller
      *
      * @param  \App\Http\Requests\Company\CompanyStoreRequest  $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \App\Exceptions\ApplicationException
      */
     public function store(CompanyStoreRequest $request)
     {
-        DB::transaction(function () use ($request) {
-            $company = Company::create($request->validated());
+        try {
+            DB::transaction(function () use ($request) {
+                $company = Company::create($request->validated());
 
-            if ($request->hasFile('logo')) {
-                $company->addMediaFromRequest('logo')->toMediaCollection('logo');
-            }
-        });
+                if ($request->hasFile('logo')) {
+                    $company->addMediaFromRequest('logo')->toMediaCollection('logo');
+                }
+            });
 
-        return redirect()->route('companies.index')
-            ->with('success', 'Company created successfully.');
+            return redirect()->route('companies.index')
+                ->with('success', 'Company created successfully.');
+        } catch (\Exception $e) {
+            throw new ApplicationException('Failed to create company. Please try again.');
+        }
     }
 
     /**
@@ -102,34 +108,48 @@ class CompanyController extends Controller
     /**
      * Update the specified company in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Company\CompanyUpdateRequest  $request
      * @param  \App\Models\Company  $company
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \App\Exceptions\ApplicationException
      */
     public function update(CompanyUpdateRequest $request, Company $company)
     {
-        $company->update($request->validated());
+        try {
+            DB::transaction(function () use ($request, $company) {
+                $company->update($request->validated());
 
-        if ($request->hasFile('logo')) {
-            $company->clearMediaCollection('logo');
-            $company->addMediaFromRequest('logo')->toMediaCollection('logo');
+                if ($request->hasFile('logo')) {
+                    $company->clearMediaCollection('logo');
+                    $company->addMediaFromRequest('logo')->toMediaCollection('logo');
+                }
+            });
+
+            return redirect()->route('companies.index')
+                ->with('success', 'Company updated successfully.');
+        } catch (\Exception $e) {
+            throw new ApplicationException('Failed to update company. Please try again.');
         }
-
-        return redirect()->route('companies.index')
-            ->with('success', 'Company updated successfully.');
     }
 
     /**
      * Remove the specified company from storage.
      *
      * @param  \App\Models\Company  $company
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \App\Exceptions\ApplicationException
      */
     public function destroy(Company $company)
     {
-        $company->delete();
+        try {
+            DB::transaction(function () use ($company) {
+                $company->delete();
+            });
 
-        return redirect()->route('companies.index')
-            ->with('success', 'Company deleted successfully.');
+            return redirect()->route('companies.index')
+                ->with('success', 'Company deleted successfully.');
+        } catch (\Exception $e) {
+            throw new ApplicationException('Failed to delete company. Please try again.');
+        }
     }
 }

@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
+import { useFlashMessages } from '@/composables/useFlashMessages';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+
+// Initialize flash message handling
+useFlashMessages();
 </script>
 
 <template>

@@ -5,7 +5,9 @@ import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { Company } from '@/types';
 import { useForm } from '@inertiajs/vue3';
+import { watch } from 'vue';
 
 /**
  * Component props interface
@@ -14,6 +16,7 @@ import { useForm } from '@inertiajs/vue3';
 interface Props {
     /** Controls whether the modal is visible */
     show: boolean;
+    company: Company | null;
 }
 
 /**
@@ -42,17 +45,44 @@ const form = useForm({
 });
 
 /**
- * Handles form submission for creating a new company
+ * Handles form submission for creating or updating a company.
  * Posts form data to the companies.store route and handles success/error states
  */
 const handleSubmit = () => {
-    form.post(route('companies.store'), {
-        onSuccess: () => {
-            emit('close');
-            form.reset();
-        },
-    });
+    /**
+     * Callback function executed on successful form submission.
+     * Closes the modal and resets the form fields.
+     */
+    const onSuccess = () => {
+        emit('close');
+        form.reset();
+    };
+
+    if (props.company) {
+        form.put(route('companies.update', props.company.id), { onSuccess });
+    } else {
+        form.post(route('companies.store'), { onSuccess });
+    }
 };
+
+/**
+ * Watches for changes in the `props.company` object.
+ * When a company is provided, it populates the form fields with the company's data.
+ * When the company is null or undefined, it resets the form.
+ * @param {Company | undefined} company - The company object to watch.
+ */
+watch(
+    () => props.company,
+    (company) => {
+        if (company) {
+            form.name = company.name ?? '';
+            form.email = company.email ?? '';
+            form.website = company.website ?? '';
+        } else {
+            form.reset();
+        }
+    },
+);
 </script>
 
 <template>
@@ -60,11 +90,15 @@ const handleSubmit = () => {
         <form class="space-y-6 p-6" @submit.prevent="handleSubmit">
             <div class="space-y-1">
                 <h2 class="text-lg font-medium text-gray-900">
-                    Create Company
+                    {{ props.company ? 'Edit Company' : 'Create Company' }}
                 </h2>
 
                 <p class="text-sm text-gray-600">
-                    Please enter the details for the new company.
+                    {{
+                        props.company
+                            ? 'Update the company details.'
+                            : 'Fill in the details to create a new company.'
+                    }}
                 </p>
             </div>
 
@@ -84,6 +118,7 @@ const handleSubmit = () => {
                 <TextInput
                     id="email"
                     v-model="form.email"
+                    type="email"
                     class="w-full"
                     placeholder="Enter company email"
                 />
@@ -95,6 +130,7 @@ const handleSubmit = () => {
                 <TextInput
                     id="website"
                     v-model="form.website"
+                    type="url"
                     class="w-full"
                     placeholder="Enter company website"
                 />
@@ -111,7 +147,7 @@ const handleSubmit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Create Company
+                    {{ props.company ? 'Update Company' : 'Create Company' }}
                 </PrimaryButton>
             </div>
         </form>

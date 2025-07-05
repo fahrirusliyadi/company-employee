@@ -1,8 +1,16 @@
 <script setup lang="ts">
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownButton from '@/Components/DropdownButton.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
 import type { Company, CompanyFilters, PaginatedData } from '@/types';
+import {
+    DeleteOutlined,
+    EditOutlined,
+    EllipsisOutlined,
+} from '@ant-design/icons-vue';
 import { Table, TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
-import { computed, h } from 'vue';
+import { computed } from 'vue';
 
 /**
  * Props for the Company Table component.
@@ -24,12 +32,22 @@ interface Props {
 interface Emits {
     /** Emitted when table state changes (pagination, sorting, etc.) */
     (e: 'change', pagination: any, filters: any, sorter: any): void;
+    /** Emitted when the edit action is triggered for a company */
+    (e: 'edit', company: Company): void;
 }
 
+/**
+ * Defines the props for the component with default values.
+ * @type {Readonly<Props>}
+ */
 const props = withDefaults(defineProps<Props>(), {
     loading: false,
 });
 
+/**
+ * Defines the emits for the component.
+ * @type {Readonly<Emits>}
+ */
 const emit = defineEmits<Emits>();
 
 /**
@@ -56,7 +74,6 @@ const pagination = computed(() => ({
 const columns = computed<ColumnsType<Company>>(() => [
     {
         title: '#',
-        dataIndex: 'index',
         key: 'index',
         width: 56,
         responsive: ['sm'],
@@ -106,16 +123,10 @@ const columns = computed<ColumnsType<Company>>(() => [
                     ? 'ascend'
                     : 'descend'
                 : null,
-        customRender: ({ text }: { text: string }) => {
-            if (!text) {
-                return '';
-            }
-            return h(
-                'a',
-                { href: text, target: '_blank', rel: 'noopener noreferrer' },
-                text,
-            );
-        },
+    },
+    {
+        key: 'actions',
+        width: 56,
     },
 ]);
 
@@ -144,5 +155,44 @@ const handleTableChange: TableProps['onChange'] = (
         :pagination="pagination"
         :loading="loading"
         @change="handleTableChange"
-    />
+    >
+        <template #bodyCell="{ column, text, record }">
+            <template v-if="column.key === 'website'">
+                <a
+                    v-if="text"
+                    :href="text"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {{ text }}
+                </a>
+            </template>
+            <template v-else-if="column.key === 'actions'">
+                <Dropdown align="right" width="48">
+                    <template #trigger>
+                        <button aria-label="Actions">
+                            <EllipsisOutlined />
+                        </button>
+                    </template>
+                    <template #content>
+                        <DropdownButton
+                            class="flex items-center gap-2"
+                            @click="$emit('edit', record as Company)"
+                        >
+                            <EditOutlined /> Edit Company
+                        </DropdownButton>
+                        <DropdownLink
+                            :href="route('companies.destroy', record.id)"
+                            method="delete"
+                            as="button"
+                            class="flex items-center gap-2 text-red-600 hover:text-red-800"
+                        >
+                            <DeleteOutlined />
+                            Delete Company
+                        </DropdownLink>
+                    </template>
+                </Dropdown>
+            </template>
+        </template>
+    </Table>
 </template>

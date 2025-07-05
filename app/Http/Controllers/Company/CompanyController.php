@@ -7,6 +7,7 @@ use App\Http\Resources\CompanyCollection;
 use App\Models\Company;
 use App\Http\Requests\Company\CompanyIndexRequest;
 use App\Http\Requests\Company\CompanyStoreRequest;
+use App\Http\Requests\Company\CompanyUpdateRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -99,9 +100,12 @@ class CompanyController extends Controller
      * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(CompanyUpdateRequest $request, Company $company)
     {
-        //
+        $company->update($request->validated());
+
+        return redirect()->route('companies.index')
+            ->with('success', 'Company updated successfully.');
     }
 
     /**

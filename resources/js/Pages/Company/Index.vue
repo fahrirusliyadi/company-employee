@@ -27,6 +27,8 @@ const props = defineProps<Props>();
 const loading = ref(false);
 /** Search input value, initialized from filters or empty string. */
 const search = ref(props.filters?.search || '');
+/** Currently selected company for editing, or null if creating a new one. */
+const selectedCompany = ref<Company | null>(null);
 /** Visibility state for the company form modal. */
 const isCompanyFormVisible = ref(false);
 
@@ -46,6 +48,20 @@ const fetchCompanies = (params: Record<string, any>) => {
         },
     });
 };
+
+/**
+ * Debounced search handler that triggers when search input changes.
+ * Resets pagination to first page and performs a new search with the current search term.
+ * Uses a 300ms debounce delay to prevent excessive API calls during typing.
+ */
+const handleSearch = debounce(() => {
+    const params: Record<string, any> = {
+        ...props.filters,
+        page: 1, // Reset to first page on search
+        search: search.value,
+    };
+    fetchCompanies(params);
+}, 300);
 
 /**
  * Handles the change event of the Company Table component.
@@ -75,18 +91,23 @@ const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
 };
 
 /**
- * Debounced search handler that triggers when search input changes.
- * Resets pagination to first page and performs a new search with the current search term.
- * Uses a 300ms debounce delay to prevent excessive API calls during typing.
+ * Handles the edit event from the CompanyTable component.
+ * Sets the selected company and makes the form visible for editing.
+ * @param {Company} company - The company object to be edited.
  */
-const handleSearch = debounce(() => {
-    const params: Record<string, any> = {
-        ...props.filters,
-        page: 1, // Reset to first page on search
-        search: search.value,
-    };
-    fetchCompanies(params);
-}, 300);
+const handleTableEdit = (company: Company) => {
+    selectedCompany.value = company;
+    isCompanyFormVisible.value = true;
+};
+
+/**
+ * Handles the close event from the CompanyForm component.
+ * Hides the form and clears the selected company.
+ */
+const handleCompanyFormClose = () => {
+    isCompanyFormVisible.value = false;
+    selectedCompany.value = null;
+};
 
 /**
  * Watches the search input for changes and triggers the debounced search handler.
@@ -108,16 +129,17 @@ watch(search, handleSearch);
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
                 <div
-                    class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:flex-row"
+                    class="flex flex-col items-center justify-between gap-2 sm:flex-row"
                 >
                     <PrimaryButton
-                        class="w-full sm:w-auto sm:order-1 justify-center gap-2"
+                        class="w-full justify-center gap-2 sm:order-1 sm:w-auto"
                         @click="isCompanyFormVisible = true"
                     >
                         <PlusOutlined /> Create Company
                     </PrimaryButton>
                     <TextInput
                         v-model="search"
+                        type="search"
                         placeholder="Search companies..."
                         class="w-full sm:w-1/2 md:w-1/3"
                     />
@@ -127,10 +149,12 @@ watch(search, handleSearch);
                     :loading="loading"
                     :filters="filters"
                     @change="handleTableChange"
+                    @edit="handleTableEdit"
                 />
                 <CompanyForm
+                    :company="selectedCompany"
                     :show="isCompanyFormVisible"
-                    @close="isCompanyFormVisible = false"
+                    @close="handleCompanyFormClose"
                 />
             </div>
         </div>

@@ -5,7 +5,7 @@ namespace App\Http\Requests\Company;
 use App\Http\Requests\Company\CompanyRequest;
 use Illuminate\Validation\Rule;
 
-class CompanyStoreRequest extends CompanyRequest
+class CompanyUpdateRequest extends CompanyRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,8 @@ class CompanyStoreRequest extends CompanyRequest
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            'name' => ['required', 'string', 'max:255', Rule::unique('companies', 'name')],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('companies', 'email')],
+            'name' => ['required', 'string', 'max:255', Rule::unique('companies', 'name')->ignore($this->route('company'))],
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('companies', 'email')->ignore($this->route('company'))],
         ]);
     }
 

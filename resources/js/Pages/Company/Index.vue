@@ -1,0 +1,126 @@
+<script setup lang="ts">
+import TextInput from '@/Components/TextInput.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import CompanyTable from './Partials/CompanyTable.vue';
+import type { Company, CompanyFilters, PaginatedData } from '@/types';
+import { Head, router } from '@inertiajs/vue3';
+import { debounce } from 'lodash';
+import { ref, watch } from 'vue';
+
+/**
+ * Props for the Company Index component.
+ * @interface Props
+ */
+interface Props {
+    /** The paginated data of companies. */
+    companies: PaginatedData<Company>;
+    /** Filter parameters for pagination, search, and sorting */
+    filters?: CompanyFilters;
+}
+
+const props = defineProps<Props>();
+
+/** Loading state for the table during data fetching operations. */
+const loading = ref(false);
+
+/** Search input value, initialized from filters or empty string. */
+const search = ref(props.filters?.search || '');
+
+/**
+ * Fetches company data based on provided parameters.
+ * @param {Record<string, any>} params - The parameters for fetching companies (e.g., page, per_page, search, sort_by, sort_direction).
+ */
+const fetchCompanies = (params: Record<string, any>) => {
+    router.get(route('companies.index'), params, {
+        preserveState: true,
+        preserveScroll: true,
+        onStart: () => {
+            loading.value = true;
+        },
+        onFinish: () => {
+            loading.value = false;
+        },
+    });
+};
+
+/**
+ * Handles the change event of the Company Table component.
+ * This function updates the URL with pagination and sorting parameters
+ * and triggers a new Inertia.js request to fetch data.
+ *
+ * @param {any} pagination - The pagination object from the table.
+ * @param {any} _filters - The filters object from the table (unused).
+ * @param {any} sorter - The sorter object(s) from the table.
+ */
+const handleTableChange = (
+    pagination: any,
+    _filters: any,
+    sorter: any,
+) => {
+    const params: Record<string, any> = {
+        page: pagination.current,
+        per_page: pagination.pageSize,
+        search: search.value,
+    };
+
+    const currentSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+
+    if (currentSorter && currentSorter.field && currentSorter.order) {
+        params.sort_by = currentSorter.field;
+        params.sort_direction =
+            currentSorter.order === 'ascend' ? 'asc' : 'desc';
+    }
+
+    fetchCompanies(params);
+};
+
+/**
+ * Debounced search handler that triggers when search input changes.
+ * Resets pagination to first page and performs a new search with the current search term.
+ * Uses a 300ms debounce delay to prevent excessive API calls during typing.
+ */
+const handleSearch = debounce(() => {
+    const params: Record<string, any> = {
+        ...props.filters,
+        page: 1, // Reset to first page on search
+        search: search.value,
+    };
+    fetchCompanies(params);
+}, 300);
+
+/**
+ * Watches the search input for changes and triggers the debounced search handler.
+ * This enables real-time search functionality as the user types.
+ */
+watch(search, handleSearch);
+</script>
+
+<template>
+    <Head title="Companies" />
+
+    <AuthenticatedLayout>
+        <template #header>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                Companies
+            </h2>
+        </template>
+
+        <div class="py-12">
+            <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+                <div class="d-flex items-center justify-between">
+                    <TextInput
+                        v-model="search"
+                        placeholder="Search companies..."
+                        class="w-1/2 sm:w-1/3"
+                    />
+                </div>
+                <CompanyTable
+                    :companies="companies"
+                    :loading="loading"
+                    :filters="filters"
+                    @change="handleTableChange"
+                />
+            </div>
+        </div>
+    </AuthenticatedLayout>
+</template>

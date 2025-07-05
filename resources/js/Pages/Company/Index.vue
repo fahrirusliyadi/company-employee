@@ -31,9 +31,9 @@ const search = ref(props.filters?.search || '');
 /** Currently selected company for editing, or null if creating a new one. */
 const selectedCompany = ref<Company | null>(null);
 /** Visibility state for the company form modal. */
-const isCompanyFormVisible = ref(false);
+const isCompanyFormOpen = ref(false);
 /** Visibility state for the delete confirmation modal. */
-const isDeleteConfirmationVisible = ref(false);
+const isDeleteConfirmationOpen = ref(false);
 
 /**
  * Fetches company data based on provided parameters.
@@ -100,7 +100,7 @@ const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
  */
 const handleTableRowEdit = (company: Company) => {
     selectedCompany.value = company;
-    isCompanyFormVisible.value = true;
+    isCompanyFormOpen.value = true;
 };
 
 /**
@@ -110,7 +110,7 @@ const handleTableRowEdit = (company: Company) => {
  */
 const handleTableRowDelete = (company: Company) => {
     selectedCompany.value = company;
-    isDeleteConfirmationVisible.value = true;
+    isDeleteConfirmationOpen.value = true;
 };
 
 /**
@@ -118,7 +118,7 @@ const handleTableRowDelete = (company: Company) => {
  * Hides the form and clears the selected company.
  */
 const handleCompanyFormClose = () => {
-    isCompanyFormVisible.value = false;
+    isCompanyFormOpen.value = false;
     selectedCompany.value = null;
 };
 
@@ -146,7 +146,7 @@ watch(search, handleSearch);
                 >
                     <PrimaryButton
                         class="w-full justify-center gap-2 sm:order-1 sm:w-auto"
-                        @click="isCompanyFormVisible = true"
+                        @click="isCompanyFormOpen = true"
                     >
                         <PlusOutlined /> Create Company
                     </PrimaryButton>
@@ -167,13 +167,13 @@ watch(search, handleSearch);
                 />
                 <CompanyForm
                     :company="selectedCompany"
-                    :show="isCompanyFormVisible"
+                    :is-open="isCompanyFormOpen"
                     @close="handleCompanyFormClose"
                 />
                 <DeleteCompanyConfirmation
-                    :show="isDeleteConfirmationVisible"
+                    :is-open="isDeleteConfirmationOpen"
                     :company="selectedCompany"
-                    @close="isDeleteConfirmationVisible = false"
+                    @close="isDeleteConfirmationOpen = false"
                 />
             </div>
         </div>

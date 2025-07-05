@@ -1,15 +1,14 @@
 <script setup lang="ts">
+import { InboxOutlined } from '@ant-design/icons-vue';
+import { useForm } from '@inertiajs/vue3';
+import { Modal, UploadDragger } from 'ant-design-vue';
+import { ref, watch } from 'vue';
+import { Company } from '@/types';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Company } from '@/types';
-import { InboxOutlined } from '@ant-design/icons-vue';
-import { useForm } from '@inertiajs/vue3';
-import { UploadDragger } from 'ant-design-vue';
-import { ref, watch } from 'vue';
 
 /**
  * Component props interface
@@ -17,7 +16,7 @@ import { ref, watch } from 'vue';
  */
 interface Props {
     /** Controls whether the modal is visible */
-    show: boolean;
+    isOpen: boolean;
     /** The company object to edit, or null for creating a new company */
     company: Company | null;
 }
@@ -126,8 +125,8 @@ watch(
 </script>
 
 <template>
-    <Modal :show="props.show" @close="$emit('close')">
-        <form class="space-y-6 p-6" @submit.prevent="handleSubmit">
+    <Modal :footer="null" :open="props.isOpen" @cancel="$emit('close')">
+        <form class="space-y-6" @submit.prevent="handleSubmit">
             <div class="space-y-1">
                 <h2 class="text-lg font-medium text-gray-900">
                     {{ props.company ? 'Edit Company' : 'Create Company' }}

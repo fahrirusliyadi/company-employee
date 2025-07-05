@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { Modal } from 'ant-design-vue';
 import DangerButton from '@/Components/DangerButton.vue';
-import Modal from '@/Components/Modal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { Company } from '@/types';
 import { router } from '@inertiajs/vue3';
@@ -8,7 +8,7 @@ import { ref } from 'vue';
 
 interface Props {
     /** Controls whether the confirmation modal is visible */
-    show: boolean;
+    isOpen: boolean;
     /** The company to be deleted */
     company: Company | null;
 }
@@ -44,8 +44,8 @@ const handleDelete = () => {
 </script>
 
 <template>
-    <Modal :show="props.show" @close="emit('close')">
-        <div class="space-y-6 p-6">
+    <Modal :footer="null" :open="props.isOpen" @cancel="emit('close')">
+        <div class="space-y-6">
             <div class="space-y-1">
                 <h2 class="text-lg font-medium text-gray-900">
                     Are you sure you want to delete "{{ props.company?.name }}"?

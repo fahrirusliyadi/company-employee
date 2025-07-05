@@ -16,6 +16,7 @@ import { watch } from 'vue';
 interface Props {
     /** Controls whether the modal is visible */
     show: boolean;
+    /** The company object to edit, or null for creating a new company */
     company: Company | null;
 }
 
@@ -137,7 +138,7 @@ watch(
                 <InputError :message="form.errors.website" />
             </div>
 
-            <div class="mt-6 flex justify-end">
+            <div class="flex justify-end">
                 <SecondaryButton @click="$emit('close')">
                     Cancel
                 </SecondaryButton>

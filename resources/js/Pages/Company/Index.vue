@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { Company, CompanyFilters, PaginatedData } from '@/types';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { Head, router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import { ref, watch } from 'vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import type { Company, CompanyFilters, PaginatedData } from '@/types';
 import CompanyForm from './Partials/CompanyForm.vue';
 import CompanyTable from './Partials/CompanyTable.vue';
+import DeleteCompanyConfirmation from './Partials/DeleteCompanyConfirmation.vue';
 
 /**
  * Props for the Company Index component.
@@ -31,6 +32,8 @@ const search = ref(props.filters?.search || '');
 const selectedCompany = ref<Company | null>(null);
 /** Visibility state for the company form modal. */
 const isCompanyFormVisible = ref(false);
+/** Visibility state for the delete confirmation modal. */
+const isDeleteConfirmationVisible = ref(false);
 
 /**
  * Fetches company data based on provided parameters.
@@ -95,9 +98,19 @@ const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
  * Sets the selected company and makes the form visible for editing.
  * @param {Company} company - The company object to be edited.
  */
-const handleTableEdit = (company: Company) => {
+const handleTableRowEdit = (company: Company) => {
     selectedCompany.value = company;
     isCompanyFormVisible.value = true;
+};
+
+/**
+ * Handles the delete event from the CompanyTable component.
+ * Sets the selected company and makes the delete confirmation modal visible.
+ * @param {Company} company - The company object to be deleted.
+ */
+const handleTableRowDelete = (company: Company) => {
+    selectedCompany.value = company;
+    isDeleteConfirmationVisible.value = true;
 };
 
 /**
@@ -149,12 +162,18 @@ watch(search, handleSearch);
                     :loading="loading"
                     :filters="filters"
                     @change="handleTableChange"
-                    @edit="handleTableEdit"
+                    @row-edit="handleTableRowEdit"
+                    @row-delete="handleTableRowDelete"
                 />
                 <CompanyForm
                     :company="selectedCompany"
                     :show="isCompanyFormVisible"
                     @close="handleCompanyFormClose"
+                />
+                <DeleteCompanyConfirmation
+                    :show="isDeleteConfirmationVisible"
+                    :company="selectedCompany"
+                    @close="isDeleteConfirmationVisible = false"
                 />
             </div>
         </div>

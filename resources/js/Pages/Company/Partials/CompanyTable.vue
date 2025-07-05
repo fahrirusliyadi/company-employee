@@ -33,7 +33,9 @@ interface Emits {
     /** Emitted when table state changes (pagination, sorting, etc.) */
     (e: 'change', pagination: any, filters: any, sorter: any): void;
     /** Emitted when the edit action is triggered for a company */
-    (e: 'edit', company: Company): void;
+    (e: 'row-edit', company: Company): void;
+    /** Emitted when the delete action is triggered for a company */
+    (e: 'row-delete', company: Company): void;
 }
 
 /**
@@ -177,19 +179,17 @@ const handleTableChange: TableProps['onChange'] = (
                     <template #content>
                         <DropdownButton
                             class="flex items-center gap-2"
-                            @click="$emit('edit', record as Company)"
+                            @click="$emit('row-edit', record as Company)"
                         >
                             <EditOutlined /> Edit Company
                         </DropdownButton>
-                        <DropdownLink
-                            :href="route('companies.destroy', record.id)"
-                            method="delete"
-                            as="button"
+                        <DropdownButton
                             class="flex items-center gap-2 text-red-600 hover:text-red-800"
+                            @click="$emit('row-delete', record as Company)"
                         >
                             <DeleteOutlined />
                             Delete Company
-                        </DropdownLink>
+                        </DropdownButton>
                     </template>
                 </Dropdown>
             </template>

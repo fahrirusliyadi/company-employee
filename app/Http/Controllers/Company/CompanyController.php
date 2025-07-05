@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CompanyCollection;
 use App\Models\Company;
 use App\Http\Requests\Company\CompanyIndexRequest;
+use App\Http\Requests\Company\CompanyStoreRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -58,12 +59,15 @@ class CompanyController extends Controller
     /**
      * Store a newly created company in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\Company\CompanyStoreRequest  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(CompanyStoreRequest $request)
     {
-        //
+        Company::create($request->validated());
+
+        return redirect()->route('companies.index')
+            ->with('success', 'Company created successfully.');
     }
 
     /**

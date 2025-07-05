@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import CompanyTable from './Partials/CompanyTable.vue';
 import type { Company, CompanyFilters, PaginatedData } from '@/types';
+import { PlusOutlined } from '@ant-design/icons-vue';
 import { Head, router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import { ref, watch } from 'vue';
+import CompanyForm from './Partials/CompanyForm.vue';
+import CompanyTable from './Partials/CompanyTable.vue';
 
 /**
  * Props for the Company Index component.
@@ -22,9 +25,10 @@ const props = defineProps<Props>();
 
 /** Loading state for the table during data fetching operations. */
 const loading = ref(false);
-
 /** Search input value, initialized from filters or empty string. */
 const search = ref(props.filters?.search || '');
+/** Visibility state for the company form modal. */
+const isCompanyFormVisible = ref(false);
 
 /**
  * Fetches company data based on provided parameters.
@@ -52,11 +56,7 @@ const fetchCompanies = (params: Record<string, any>) => {
  * @param {any} _filters - The filters object from the table (unused).
  * @param {any} sorter - The sorter object(s) from the table.
  */
-const handleTableChange = (
-    pagination: any,
-    _filters: any,
-    sorter: any,
-) => {
+const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
     const params: Record<string, any> = {
         page: pagination.current,
         per_page: pagination.pageSize,
@@ -107,11 +107,19 @@ watch(search, handleSearch);
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                <div class="d-flex items-center justify-between">
+                <div
+                    class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:flex-row"
+                >
+                    <PrimaryButton
+                        class="w-full sm:w-auto sm:order-1 justify-center gap-2"
+                        @click="isCompanyFormVisible = true"
+                    >
+                        <PlusOutlined /> Create Company
+                    </PrimaryButton>
                     <TextInput
                         v-model="search"
                         placeholder="Search companies..."
-                        class="w-1/2 sm:w-1/3"
+                        class="w-full sm:w-1/2 md:w-1/3"
                     />
                 </div>
                 <CompanyTable
@@ -119,6 +127,10 @@ watch(search, handleSearch);
                     :loading="loading"
                     :filters="filters"
                     @change="handleTableChange"
+                />
+                <CompanyForm
+                    :show="isCompanyFormVisible"
+                    @close="isCompanyFormVisible = false"
                 />
             </div>
         </div>

@@ -8,7 +8,7 @@ use App\Models\Company;
 use App\Http\Requests\Company\CompanyIndexRequest;
 use App\Http\Requests\Company\CompanyStoreRequest;
 use App\Http\Requests\Company\CompanyUpdateRequest;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class CompanyController extends Controller
@@ -21,14 +21,14 @@ class CompanyController extends Controller
      */
     public function index(CompanyIndexRequest $request)
     {
-        $query = Company::query();
+        $query = Company::with('media');
 
         // Handle search
         if ($request->has('search') && $request->input('search') !== null) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -65,7 +65,13 @@ class CompanyController extends Controller
      */
     public function store(CompanyStoreRequest $request)
     {
-        Company::create($request->validated());
+        DB::transaction(function () use ($request) {
+            $company = Company::create($request->validated());
+
+            if ($request->hasFile('logo')) {
+                $company->addMediaFromRequest('logo')->toMediaCollection('logo');
+            }
+        });
 
         return redirect()->route('companies.index')
             ->with('success', 'Company created successfully.');
@@ -103,6 +109,11 @@ class CompanyController extends Controller
     public function update(CompanyUpdateRequest $request, Company $company)
     {
         $company->update($request->validated());
+
+        if ($request->hasFile('logo')) {
+            $company->clearMediaCollection('logo');
+            $company->addMediaFromRequest('logo')->toMediaCollection('logo');
+        }
 
         return redirect()->route('companies.index')
             ->with('success', 'Company updated successfully.');

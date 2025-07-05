@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownButton from '@/Components/DropdownButton.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
 import type { Company, CompanyFilters, PaginatedData } from '@/types';
 import {
     DeleteOutlined,
     EditOutlined,
     EllipsisOutlined,
 } from '@ant-design/icons-vue';
-import { Table, TableProps } from 'ant-design-vue';
+import { Avatar, Table, TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
 
@@ -159,7 +158,23 @@ const handleTableChange: TableProps['onChange'] = (
         @change="handleTableChange"
     >
         <template #bodyCell="{ column, text, record }">
-            <template v-if="column.key === 'website'">
+            <template v-if="column.key === 'name'">
+                <span class="flex items-center gap-4">
+                    <img
+                        v-if="record.logo"
+                        width="50"
+                        height="50"
+                        class="shrink-0 rounded"
+                        :src="record.logo['50x50']"
+                        :alt="`${record.name} logo`"
+                    />
+                    <Avatar v-else shape="square" class="shrink-0" :size="50">
+                        {{ record.name.charAt(0).toUpperCase() }}
+                    </Avatar>
+                    {{ text }}
+                </span>
+            </template>
+            <template v-else-if="column.key === 'website'">
                 <a
                     v-if="text"
                     :href="text"

@@ -6,8 +6,10 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Company } from '@/types';
+import { InboxOutlined } from '@ant-design/icons-vue';
 import { useForm } from '@inertiajs/vue3';
-import { watch } from 'vue';
+import { UploadDragger } from 'ant-design-vue';
+import { ref, watch } from 'vue';
 
 /**
  * Component props interface
@@ -36,6 +38,8 @@ const emit = defineEmits<Emits>();
  * Form instance for handling company creation
  * Contains form data and validation state
  */
+const logoPreview = ref<string | null>(null);
+
 const form = useForm({
     /** Company name field */
     name: '',
@@ -43,7 +47,20 @@ const form = useForm({
     email: '',
     /** Company website field */
     website: '',
+    /** Company logo file */
+    logo: null as File | null,
+    /** HTTP method for form spoofing */
+    _method: 'post' as 'post' | 'put',
 });
+
+/**
+ * Resets the form fields to their initial state.
+ * Clears the logo preview and resets all form fields.
+ */
+const resetForm = () => {
+    form.reset();
+    logoPreview.value = null;
+};
 
 /**
  * Handles form submission for creating or updating a company.
@@ -56,13 +73,34 @@ const handleSubmit = () => {
      */
     const onSuccess = () => {
         emit('close');
-        form.reset();
+        resetForm();
     };
 
     if (props.company) {
-        form.put(route('companies.update', props.company.id), { onSuccess });
+        form._method = 'put';
+        form.post(route('companies.update', props.company.id), {
+            onSuccess,
+            forceFormData: true,
+        });
     } else {
+        form._method = 'post';
         form.post(route('companies.store'), { onSuccess });
+    }
+};
+
+/**
+ * Handles file change event for logo upload.
+ * Updates the form's logo field and generates a preview URL.
+ * @param {any} info - The file information from the upload component.
+ */
+const handleFileChange = (info: any) => {
+    const file = info.fileList[0]?.originFileObj;
+    if (file) {
+        form.logo = file;
+        logoPreview.value = URL.createObjectURL(file);
+    } else {
+        form.logo = null;
+        logoPreview.value = null;
     }
 };
 
@@ -79,8 +117,9 @@ watch(
             form.name = company.name ?? '';
             form.email = company.email ?? '';
             form.website = company.website ?? '';
+            logoPreview.value = company.logo?.url ?? null;
         } else {
-            form.reset();
+            resetForm();
         }
     },
 );
@@ -136,6 +175,36 @@ watch(
                     placeholder="Enter company website"
                 />
                 <InputError :message="form.errors.website" />
+            </div>
+
+            <div class="space-y-1">
+                <InputLabel for="logo" value="Logo" />
+
+                <UploadDragger
+                    class="block"
+                    accept=".png,.jpg,.jpeg,.svg"
+                    :max-count="1"
+                    :show-upload-list="false"
+                    :beforeUpload="() => false"
+                    @change="handleFileChange"
+                >
+                    <img
+                        v-if="logoPreview"
+                        :src="logoPreview"
+                        alt="Logo Preview"
+                        class="max-h-40 w-auto rounded-md object-contain mx-auto mb-4"
+                    />
+                    <p class="ant-upload-drag-icon" v-else>
+                        <InboxOutlined />
+                    </p>
+                    <p class="ant-upload-text">
+                        Click or drag file to this area to upload
+                    </p>
+                    <p class="ant-upload-hint">
+                        Accepts PNG, JPG, and SVG formats only.
+                    </p>
+                </UploadDragger>
+                <InputError :message="form.errors.logo" />
             </div>
 
             <div class="flex justify-end">

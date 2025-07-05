@@ -5,6 +5,10 @@ export interface Company {
     name: string | null;
     email: string | null;
     website: string | null;
+    logo: {
+        url: string;
+        '50x50': string;
+    } | null;
     created_at: string | null;
     updated_at: string | null;
 }

@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import ButtonLink from '@/Components/ButtonLink.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownButton from '@/Components/DropdownButton.vue';
-import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
 import {
     DeleteOutlined,
     EditOutlined,
     EllipsisOutlined,
 } from '@ant-design/icons-vue';
-import { Table, TableProps } from 'ant-design-vue';
+import { TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
+import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
+import ButtonLink from '@/Components/ButtonLink.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownButton from '@/Components/DropdownButton.vue';
+import Table from '@/Components/Table.vue';
 
 /**
  * Props for the Employee Table component.
@@ -68,6 +69,7 @@ const pagination = computed(() => ({
         const [start, end] = range;
         return `Showing ${start}-${end} of ${total} employees`;
     },
+    position: ['bottomCenter'],
 }));
 
 /**
@@ -163,7 +165,7 @@ const handleTableChange: TableProps['onChange'] = (
     <Table
         :dataSource="employees.data"
         :columns="columns"
-        :row-key="(record) => record.id"
+        :row-key="(record: Employee) => record.id"
         :pagination="pagination"
         :loading="isLoading"
         @change="handleTableChange"

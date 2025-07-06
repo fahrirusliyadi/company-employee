@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Company } from '@/types';
-import { Select, Spin } from 'ant-design-vue';
+import { Spin } from 'ant-design-vue';
 import { SelectValue } from 'ant-design-vue/es/select';
 import axios from 'axios';
 import { debounce, find } from 'lodash';
 import { computed, ref, watch } from 'vue';
+import { Company } from '@/types';
+import Select from '@/Components/Select.vue';
 
 /**
  * Props interface for the CompanySelect component.

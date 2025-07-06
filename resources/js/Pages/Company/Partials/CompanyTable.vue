@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownButton from '@/Components/DropdownButton.vue';
-import ExternalLink from '@/Components/ExternalLink.vue';
-import type { Company, CompanyFilters, PaginatedData } from '@/types';
 import {
     DeleteOutlined,
     EditOutlined,
     EllipsisOutlined,
 } from '@ant-design/icons-vue';
-import { Avatar, Table, TableProps } from 'ant-design-vue';
+import { Avatar, TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
+import type { Company, CompanyFilters, PaginatedData } from '@/types';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownButton from '@/Components/DropdownButton.vue';
+import ExternalLink from '@/Components/ExternalLink.vue';
+import Table from '@/Components/Table.vue';
 
 /**
  * Props for the Company Table component.
@@ -66,6 +67,7 @@ const pagination = computed(() => ({
         const [start, end] = range;
         return `Showing ${start}-${end} of ${total} companies`;
     },
+    position: ['bottomCenter'],
 }));
 
 /**
@@ -153,7 +155,7 @@ const handleTableChange: TableProps['onChange'] = (
     <Table
         :dataSource="companies.data"
         :columns="columns"
-        :row-key="(record) => record.id"
+        :row-key="(record: Company) => record.id"
         :pagination="pagination"
         :loading="isLoading"
         @change="handleTableChange"

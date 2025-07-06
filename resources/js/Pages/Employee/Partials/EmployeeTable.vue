@@ -4,37 +4,37 @@ import {
     EditOutlined,
     EllipsisOutlined,
 } from '@ant-design/icons-vue';
-import { Avatar, Table, TableProps } from 'ant-design-vue';
+import { Table, TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
-import type { Company, CompanyFilters, PaginatedData } from '@/types';
+import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownButton from '@/Components/DropdownButton.vue';
 
 /**
- * Props for the Company Table component.
+ * Props for the Employee Table component.
  * @interface Props
  */
 interface Props {
-    /** The paginated data of companies. */
-    companies: PaginatedData<Company>;
+    /** The paginated data of employees. */
+    employees: PaginatedData<Employee>;
     /** Loading state for the table during data fetching operations. */
     isLoading?: boolean;
     /** Filter parameters for pagination, search, and sorting */
-    filters?: CompanyFilters;
+    filters?: EmployeeFilters;
 }
 
 /**
- * Emits for the Company Table component.
+ * Emits for the Employee Table component.
  * @interface Emits
  */
 interface Emits {
     /** Emitted when table state changes (pagination, sorting, etc.) */
     (e: 'change', pagination: any, filters: any, sorter: any): void;
-    /** Emitted when the edit action is triggered for a company */
-    (e: 'row-edit', company: Company): void;
-    /** Emitted when the delete action is triggered for a company */
-    (e: 'row-delete', company: Company): void;
+    /** Emitted when the edit action is triggered for an employee */
+    (e: 'row-edit', employee: Employee): void;
+    /** Emitted when the delete action is triggered for an employee */
+    (e: 'row-delete', employee: Employee): void;
 }
 
 /**
@@ -56,23 +56,23 @@ const emit = defineEmits<Emits>();
  * @returns {Object} Pagination configuration object with current page, page size, total count, and display options.
  */
 const pagination = computed(() => ({
-    current: props.companies.meta.current_page,
-    pageSize: props.companies.meta.per_page,
-    total: props.companies.meta.total,
+    current: props.employees.meta.current_page,
+    pageSize: props.employees.meta.per_page,
+    total: props.employees.meta.total,
     hideOnSinglePage: true,
     showSizeChanger: true,
     showTotal: (total: number, range: [number, number]) => {
         const [start, end] = range;
-        return `Showing ${start}-${end} of ${total} companies`;
+        return `Showing ${start}-${end} of ${total} employees`;
     },
 }));
 
 /**
  * Computed table columns configuration for the Ant Design Vue table.
- * Defines column structure, sorting, responsiveness, and custom rendering for the companies table.
- * @returns {ColumnsType<Company>} Array of column configuration objects.
+ * Defines column structure, sorting, responsiveness, and custom rendering for the employees table.
+ * @returns {ColumnsType<Employee>} Array of column configuration objects.
  */
-const columns = computed<ColumnsType<Company>>(() => [
+const columns = computed<ColumnsType<Employee>>(() => [
     {
         title: '#',
         key: 'index',
@@ -87,16 +87,24 @@ const columns = computed<ColumnsType<Company>>(() => [
         },
     },
     {
-        title: 'Name',
-        dataIndex: 'name',
+        title: 'Full Name',
+        dataIndex: 'first_name',
         key: 'name',
         sorter: true,
         sortOrder:
-            props.filters?.sort_by === 'name'
+            props.filters?.sort_by === 'first_name'
                 ? props.filters.sort_direction === 'asc'
                     ? 'ascend'
                     : 'descend'
                 : null,
+        customRender: ({ record }: { record: Employee }) => {
+            return record.first_name + ' ' + record.last_name;
+        },
+    },
+    {
+        title: 'Company',
+        key: 'company',
+        responsive: ['md'],
     },
     {
         title: 'Email',
@@ -112,14 +120,14 @@ const columns = computed<ColumnsType<Company>>(() => [
                 : null,
     },
     {
-        title: 'Website',
-        dataIndex: 'website',
-        key: 'website',
+        title: 'Phone',
+        dataIndex: 'phone',
+        key: 'phone',
         ellipsis: true,
         sorter: true,
         responsive: ['sm'],
         sortOrder:
-            props.filters?.sort_by === 'website'
+            props.filters?.sort_by === 'phone'
                 ? props.filters.sort_direction === 'asc'
                     ? 'ascend'
                     : 'descend'
@@ -150,7 +158,7 @@ const handleTableChange: TableProps['onChange'] = (
 
 <template>
     <Table
-        :dataSource="companies.data"
+        :dataSource="employees.data"
         :columns="columns"
         :row-key="(record) => record.id"
         :pagination="pagination"
@@ -158,31 +166,9 @@ const handleTableChange: TableProps['onChange'] = (
         @change="handleTableChange"
     >
         <template #bodyCell="{ column, text, record }">
-            <template v-if="column.key === 'name'">
-                <span class="flex items-center gap-4">
-                    <img
-                        v-if="record.logo"
-                        width="50"
-                        height="50"
-                        class="shrink-0 rounded"
-                        :src="record.logo['50x50']"
-                        :alt="`${record.name} logo`"
-                    />
-                    <Avatar v-else shape="square" class="shrink-0" :size="50">
-                        {{ record.name.charAt(0).toUpperCase() }}
-                    </Avatar>
-                    {{ text }}
-                </span>
-            </template>
-            <template v-else-if="column.key === 'website'">
-                <a
-                    v-if="text"
-                    :href="text"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {{ text }}
-                </a>
+            <template v-if="column.key === 'company'">
+                <span v-if="record.company">{{ record.company.name }}</span>
+                <span v-else class="text-gray-400">No company</span>
             </template>
             <template v-else-if="column.key === 'actions'">
                 <Dropdown align="right" width="48">
@@ -194,16 +180,16 @@ const handleTableChange: TableProps['onChange'] = (
                     <template #content>
                         <DropdownButton
                             class="flex items-center gap-2"
-                            @click="$emit('row-edit', record as Company)"
+                            @click="$emit('row-edit', record as Employee)"
                         >
-                            <EditOutlined /> Edit Company
+                            <EditOutlined /> Edit Employee
                         </DropdownButton>
                         <DropdownButton
                             class="flex items-center gap-2 text-red-600 hover:text-red-800"
-                            @click="$emit('row-delete', record as Company)"
+                            @click="$emit('row-delete', record as Employee)"
                         >
                             <DeleteOutlined />
-                            Delete Company
+                            Delete Employee
                         </DropdownButton>
                     </template>
                 </Dropdown>

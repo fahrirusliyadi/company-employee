@@ -49,6 +49,12 @@ useFlashMessages();
                                 >
                                     Companies
                                 </NavLink>
+                                <NavLink
+                                    :href="route('employees.index')"
+                                    :active="route().current('employees.index')"
+                                >
+                                    Employees
+                                </NavLink>
                             </div>
                         </div>
 
@@ -155,6 +161,18 @@ useFlashMessages();
                             :active="route().current('dashboard')"
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('companies.index')"
+                            :active="route().current('companies.index')"
+                        >
+                            Companies
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('employees.index')"
+                            :active="route().current('employees.index')"
+                        >
+                            Employees
                         </ResponsiveNavLink>
                     </div>
 

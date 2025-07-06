@@ -6,40 +6,43 @@ import { ref, watch } from 'vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { Company, CompanyFilters, PaginatedData } from '@/types';
-import CompanyForm from './Partials/CompanyForm.vue';
-import CompanyTable from './Partials/CompanyTable.vue';
-import DeleteCompanyConfirmation from './Partials/DeleteCompanyConfirmation.vue';
+import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
+import EmployeeForm from './Partials/EmployeeForm.vue';
+import EmployeeTable from './Partials/EmployeeTable.vue';
+import DeleteEmployeeConfirmation from './Partials/DeleteEmployeeConfirmation.vue';
 
 /**
- * Props for the Company Index component.
+ * Props for the Employee Index component.
  * @interface Props
  */
 interface Props {
-    /** The paginated data of companies. */
-    companies: PaginatedData<Company>;
+    /** The paginated data of employees. */
+    employees: PaginatedData<Employee>;
+    /** List of companies for the form dropdown */
+    companies: Array<{ id: number; name: string }>;
     /** Filter parameters for pagination, search, and sorting */
-    filters?: CompanyFilters;
+    filters?: EmployeeFilters;
 }
 
 const props = defineProps<Props>();
+
 /** Search input value, initialized from filters or empty string. */
 const search = ref(props.filters?.search || '');
-/** Currently selected company for editing, or null if creating a new one. */
-const selectedCompany = ref<Company | null>(null);
+/** Currently selected employee for editing, or null if creating a new one. */
+const selectedEmployee = ref<Employee | null>(null);
 /** Loading state for the table during data fetching operations. */
 const isLoading = ref(false);
-/** Visibility state for the company form modal. */
-const isCompanyFormOpen = ref(false);
+/** Visibility state for the employee form modal. */
+const isEmployeeFormOpen = ref(false);
 /** Visibility state for the delete confirmation modal. */
 const isDeleteConfirmationOpen = ref(false);
 
 /**
- * Fetches company data based on provided parameters.
- * @param {Record<string, any>} params - The parameters for fetching companies (e.g., page, per_page, search, sort_by, sort_direction).
+ * Fetches employee data based on provided parameters.
+ * @param {Record<string, any>} params - The parameters for fetching employees (e.g., page, per_page, search, sort_by, sort_direction).
  */
-const fetchCompanies = (params: Record<string, any>) => {
-    router.get(route('companies.index'), params, {
+const fetchEmployees = (params: Record<string, any>) => {
+    router.get(route('employees.index'), params, {
         preserveState: true,
         preserveScroll: true,
         onStart: () => {
@@ -62,11 +65,11 @@ const handleSearch = debounce(() => {
         page: 1, // Reset to first page on search
         search: search.value,
     };
-    fetchCompanies(params);
+    fetchEmployees(params);
 }, 300);
 
 /**
- * Handles the change event of the Company Table component.
+ * Handles the change event of the Employee Table component.
  * This function updates the URL with pagination and sorting parameters
  * and triggers a new Inertia.js request to fetch data.
  *
@@ -89,36 +92,36 @@ const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
             currentSorter.order === 'ascend' ? 'asc' : 'desc';
     }
 
-    fetchCompanies(params);
+    fetchEmployees(params);
 };
 
 /**
- * Handles the edit event from the CompanyTable component.
- * Sets the selected company and makes the form visible for editing.
- * @param {Company} company - The company object to be edited.
+ * Handles the edit event from the EmployeeTable component.
+ * Sets the selected employee and makes the form visible for editing.
+ * @param {Employee} employee - The employee object to be edited.
  */
-const handleTableRowEdit = (company: Company) => {
-    selectedCompany.value = company;
-    isCompanyFormOpen.value = true;
+const handleTableRowEdit = (employee: Employee) => {
+    selectedEmployee.value = employee;
+    isEmployeeFormOpen.value = true;
 };
 
 /**
- * Handles the delete event from the CompanyTable component.
- * Sets the selected company and makes the delete confirmation modal visible.
- * @param {Company} company - The company object to be deleted.
+ * Handles the delete event from the EmployeeTable component.
+ * Sets the selected employee and makes the delete confirmation modal visible.
+ * @param {Employee} employee - The employee object to be deleted.
  */
-const handleTableRowDelete = (company: Company) => {
-    selectedCompany.value = company;
+const handleTableRowDelete = (employee: Employee) => {
+    selectedEmployee.value = employee;
     isDeleteConfirmationOpen.value = true;
 };
 
 /**
- * Handles the close event from the CompanyForm component.
- * Hides the form and clears the selected company.
+ * Handles the close event from the EmployeeForm component.
+ * Hides the form and clears the selected employee.
  */
-const handleCompanyFormClose = () => {
-    isCompanyFormOpen.value = false;
-    selectedCompany.value = null;
+const handleEmployeeFormClose = () => {
+    isEmployeeFormOpen.value = false;
+    selectedEmployee.value = null;
 };
 
 /**
@@ -129,12 +132,12 @@ watch(search, handleSearch);
 </script>
 
 <template>
-    <Head title="Companies" />
+    <Head title="Employees" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Companies
+                Employees
             </h2>
         </template>
 
@@ -145,33 +148,34 @@ watch(search, handleSearch);
                 >
                     <PrimaryButton
                         class="w-full justify-center gap-2 sm:order-1 sm:w-auto"
-                        @click="isCompanyFormOpen = true"
+                        @click="isEmployeeFormOpen = true"
                     >
-                        <PlusOutlined /> Create Company
+                        <PlusOutlined /> Create Employee
                     </PrimaryButton>
                     <TextInput
                         v-model="search"
                         type="search"
-                        placeholder="Search companies..."
+                        placeholder="Search employees..."
                         class="w-full sm:w-1/2 md:w-1/3"
                     />
                 </div>
-                <CompanyTable
-                    :companies="companies"
+                <EmployeeTable
+                    :employees="employees"
                     :isLoading="isLoading"
                     :filters="filters"
                     @change="handleTableChange"
                     @row-edit="handleTableRowEdit"
                     @row-delete="handleTableRowDelete"
                 />
-                <CompanyForm
-                    :company="selectedCompany"
-                    :is-open="isCompanyFormOpen"
-                    @close="handleCompanyFormClose"
+                <EmployeeForm
+                    :employee="selectedEmployee"
+                    :companies="companies"
+                    :is-open="isEmployeeFormOpen"
+                    @close="handleEmployeeFormClose"
                 />
-                <DeleteCompanyConfirmation
+                <DeleteEmployeeConfirmation
                     :is-open="isDeleteConfirmationOpen"
-                    :company="selectedCompany"
+                    :employee="selectedEmployee"
                     @close="isDeleteConfirmationOpen = false"
                 />
             </div>

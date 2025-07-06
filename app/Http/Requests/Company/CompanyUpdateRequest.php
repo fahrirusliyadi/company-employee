@@ -27,16 +27,4 @@ class CompanyUpdateRequest extends CompanyRequest
             'email' => ['nullable', 'email', 'max:255', Rule::unique('companies', 'email')->ignore($this->route('company'))],
         ]);
     }
-
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
-     */
-    public function messages(): array
-    {
-        return array_merge(parent::messages(), [
-            'name.unique' => 'A company with this name already exists.',
-        ]);
-    }
 }

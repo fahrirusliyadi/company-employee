@@ -57,3 +57,4 @@ export interface ListFilters {
 }
 
 export * from './company';
+export * from './employee';

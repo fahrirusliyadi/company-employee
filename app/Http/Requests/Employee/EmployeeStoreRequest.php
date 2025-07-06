@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Company;
+namespace App\Http\Requests\Employee;
 
-use App\Http\Requests\Company\CompanyRequest;
+use App\Http\Requests\Employee\EmployeeRequest;
 use Illuminate\Validation\Rule;
 
-class CompanyStoreRequest extends CompanyRequest
+class EmployeeStoreRequest extends EmployeeRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,7 @@ class CompanyStoreRequest extends CompanyRequest
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            'name' => ['required', 'string', 'max:255', Rule::unique('companies', 'name')],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('companies', 'email')],
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('employees', 'email')],
         ]);
     }
 }

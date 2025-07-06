@@ -30,6 +30,7 @@ abstract class CompanyRequest extends FormRequest
     {
         return [
             'name.required' => 'The company name is required.',
+            'name.unique' => 'A company with this name already exists.',
             'email.email' => 'Please enter a valid email address.',
             'email.unique' => 'A company with this email already exists.',
             'website.url' => 'Please enter a valid URL for the website.',

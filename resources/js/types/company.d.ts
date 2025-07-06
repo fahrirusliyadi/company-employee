@@ -9,8 +9,6 @@ export interface Company {
         url: string;
         '50x50': string;
     } | null;
-    created_at: string | null;
-    updated_at: string | null;
 }
 
 /**
@@ -19,5 +17,5 @@ export interface Company {
  */
 export interface CompanyFilters extends ListFilters {
     /** Field to sort by - restricted to company-specific fields */
-    sort_by?: 'name' | 'email' | 'website' | 'created_at' | 'updated_at';
+    sort_by?: 'name' | 'email' | 'website';
 }

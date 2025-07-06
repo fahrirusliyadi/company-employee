@@ -27,8 +27,6 @@ class CompanyResource extends JsonResource
                     '50x50' => $logo->getUrl('50x50'),
                 ]
                 : null,
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
 }

@@ -19,8 +19,6 @@ import CompanyDetail from './Partials/CompanyDetail.vue';
 interface Props {
     /** The paginated data of employees. */
     employees: PaginatedData<Employee>;
-    /** List of companies for the form dropdown */
-    companies: Array<{ id: number; name: string }>;
     /** Filter parameters for pagination, search, and sorting */
     filters?: EmployeeFilters;
 }
@@ -192,7 +190,6 @@ watch(search, handleSearch);
                 />
                 <EmployeeForm
                     :employee="selectedEmployee"
-                    :companies="companies"
                     :is-open="isEmployeeFormOpen"
                     @close="handleEmployeeFormClose"
                 />

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { InboxOutlined } from '@ant-design/icons-vue';
-import { useForm } from '@inertiajs/vue3';
-import { Modal, UploadDragger } from 'ant-design-vue';
-import { ref, watch } from 'vue';
-import { Company } from '@/types';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { Company } from '@/types';
+import { InboxOutlined } from '@ant-design/icons-vue';
+import { useForm } from '@inertiajs/vue3';
+import { Modal, UploadDragger } from 'ant-design-vue';
+import { ref, watch } from 'vue';
 
 /**
  * Component props interface
@@ -125,16 +125,16 @@ watch(
 </script>
 
 <template>
-    <Modal :footer="null" :open="props.isOpen" @cancel="$emit('close')">
+    <Modal :footer="null" :open="isOpen" @cancel="$emit('close')">
         <form class="space-y-6" @submit.prevent="handleSubmit">
             <div class="space-y-1">
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ props.company ? 'Edit Company' : 'Create Company' }}
+                    {{ company ? 'Edit Company' : 'Create Company' }}
                 </h2>
 
                 <p class="text-sm text-gray-600">
                     {{
-                        props.company
+                        company
                             ? 'Update the company details.'
                             : 'Fill in the details to create a new company.'
                     }}
@@ -191,7 +191,7 @@ watch(
                         v-if="logoPreview"
                         :src="logoPreview"
                         alt="Logo Preview"
-                        class="max-h-40 w-auto rounded-md object-contain mx-auto mb-4"
+                        class="mx-auto mb-4 max-h-[140px] w-auto rounded-md object-contain"
                     />
                     <p class="ant-upload-drag-icon" v-else>
                         <InboxOutlined />
@@ -216,7 +216,7 @@ watch(
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    {{ props.company ? 'Update Company' : 'Create Company' }}
+                    {{ company ? 'Update Company' : 'Create Company' }}
                 </PrimaryButton>
             </div>
         </form>

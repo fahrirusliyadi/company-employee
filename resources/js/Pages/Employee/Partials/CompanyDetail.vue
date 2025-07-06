@@ -3,7 +3,7 @@ import ExternalLink from '@/Components/ExternalLink.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { Company } from '@/types';
 import { LinkOutlined, MailOutlined } from '@ant-design/icons-vue';
-import { Empty, Modal } from 'ant-design-vue';
+import { Avatar, Empty, Modal } from 'ant-design-vue';
 
 /**
  * Component props interface
@@ -42,26 +42,20 @@ defineEmits<Emits>();
                 </p>
             </div>
 
-            <div class="flex flex-col gap-4 sm:flex-row">
+            <div class="flex flex-col sm:items-center gap-4 sm:flex-row">
                 <div class="shrink-0">
-                    <div class="mx-auto max-h-40 max-w-40">
+                    <div class="mx-auto max-h-[140px] max-w-[140px]">
                         <img
                             v-if="company?.logo"
                             :src="company.logo.url"
                             alt="Logo Preview"
                             class="h-full w-full rounded-md object-contain"
                         />
-                        <div
-                            v-else
-                            class="flex h-40 w-40 items-center justify-center rounded-md bg-gray-100"
-                        >
-                            <span class="text-4xl font-bold text-gray-400">
-                                {{
-                                    company?.name?.charAt(0)?.toUpperCase() ||
-                                    '?'
-                                }}
+                        <Avatar v-else shape="square" :size="140">
+                            <span class="text-4xl">
+                                {{ company?.name?.charAt(0)?.toUpperCase() }}
                             </span>
-                        </div>
+                        </Avatar>
                     </div>
                 </div>
                 <div class="grow rounded border p-4">
@@ -105,7 +99,7 @@ defineEmits<Emits>();
                         </div>
                     </dl>
                     <Empty
-                        class="my-2"
+                        class="my-[1px]"
                         v-else
                         :image="Empty.PRESENTED_IMAGE_SIMPLE"
                     >

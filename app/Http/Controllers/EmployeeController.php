@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Company;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EmployeeCollection;
 use App\Models\Employee;
-use App\Models\Company;
 use App\Http\Requests\Employee\EmployeeIndexRequest;
 use App\Http\Requests\Employee\EmployeeStoreRequest;
 use App\Http\Requests\Employee\EmployeeUpdateRequest;
@@ -38,18 +37,17 @@ class EmployeeController extends Controller
         // Handle sorting
         if ($request->has('sort_by') && $request->has('sort_direction')) {
             $query->orderBy($request->input('sort_by'), $request->input('sort_direction'));
+        } else {
+            // Default sorting by created_at descending
+            $query->orderBy('created_at', 'desc');
         }
 
         // Handle pagination
         $perPage = $request->input('per_page', 10); // Default to 10 if not provided
         $employees = $query->paginate($perPage);
 
-        // Get companies for the form dropdown
-        $companies = Company::select('id', 'name')->orderBy('name')->get();
-
         return Inertia::render('Employee/Index', [
             'employees' => new EmployeeCollection($employees),
-            'companies' => $companies,
             'filters' => $request->only(['page', 'per_page', 'search', 'sort_by', 'sort_direction']),
         ]);
     }

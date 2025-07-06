@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Company\CompanyController;
-use App\Http\Controllers\Company\EmployeeController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\Internal\CompanyController as InternalCompanyController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -21,9 +22,16 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Resource routes
     Route::resource('companies', CompanyController::class);
     Route::resource('employees', EmployeeController::class);
 
+    // Internal endpoints for UI components
+    Route::prefix('internal')->controller(InternalCompanyController::class)->group(function () {
+        Route::get('/companies/options', 'options')->name('internal.companies.options');
+    });
+
+    // Profile routes
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');

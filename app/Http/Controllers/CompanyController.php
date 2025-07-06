@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Company;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CompanyCollection;
@@ -36,6 +36,9 @@ class CompanyController extends Controller
         // Handle sorting
         if ($request->has('sort_by') && $request->has('sort_direction')) {
             $query->orderBy($request->input('sort_by'), $request->input('sort_direction'));
+        } else {
+            // Default sorting by created_at descending
+            $query->orderBy('created_at', 'desc');
         }
 
         // Handle pagination

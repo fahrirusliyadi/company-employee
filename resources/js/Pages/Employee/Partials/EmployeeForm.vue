@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { Modal, Select } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
 import { watch } from 'vue';
 import { Employee } from '@/types';
 import InputError from '@/Components/InputError.vue';
@@ -8,6 +8,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import CompanySelect from '@/Components/CompanySelect.vue';
 
 /**
  * Component props interface
@@ -18,8 +19,6 @@ interface Props {
     isOpen: boolean;
     /** The employee object to edit, or null for creating a new employee */
     employee: Employee | null;
-    /** List of companies for the dropdown */
-    companies: Array<{ id: number; name: string }>;
 }
 
 /**
@@ -78,6 +77,11 @@ const handleSubmit = () => {
     }
 };
 
+const handleCancel = () => {
+    form.reset();
+    emit('close');
+};
+
 /**
  * Watches for changes in the `props.employee` object.
  * When an employee is provided, it populates the form fields with the employee's data.
@@ -102,16 +106,16 @@ watch(
 </script>
 
 <template>
-    <Modal :footer="null" :open="props.isOpen" @cancel="$emit('close')">
+    <Modal :footer="null" :open="isOpen" @cancel="handleCancel">
         <form class="space-y-6" @submit.prevent="handleSubmit">
             <div class="space-y-1">
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ props.employee ? 'Edit Employee' : 'Create Employee' }}
+                    {{ employee ? 'Edit Employee' : 'Create Employee' }}
                 </h2>
 
                 <p class="text-sm text-gray-600">
                     {{
-                        props.employee
+                        employee
                             ? 'Update the employee details.'
                             : 'Fill in the details to create a new employee.'
                     }}
@@ -120,12 +124,12 @@ watch(
 
             <div class="space-y-1">
                 <InputLabel for="company_id" value="Company" />
-                <Select
+                <CompanySelect
                     id="company_id"
-                    v-model:value="form.company_id"
+                    v-model="form.company_id"
                     class="w-full"
                     placeholder="Select a company"
-                    :options="companies.map(company => ({ value: company.id, label: company.name }))"
+                    :initial-company="employee?.company"
                 />
                 <InputError :message="form.errors.company_id" />
             </div>
@@ -178,7 +182,7 @@ watch(
             </div>
 
             <div class="flex justify-end gap-3">
-                <SecondaryButton type="button" @click="$emit('close')">
+                <SecondaryButton type="button" @click="handleCancel">
                     Cancel
                 </SecondaryButton>
                 <PrimaryButton
@@ -186,7 +190,7 @@ watch(
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    {{ props.employee ? 'Update Employee' : 'Create Employee' }}
+                    {{ employee ? 'Update Employee' : 'Create Employee' }}
                 </PrimaryButton>
             </div>
         </form>

@@ -123,7 +123,7 @@ watch(
             form.name = company.name ?? '';
             form.email = company.email ?? '';
             form.website = company.website ?? '';
-            logoPreview.value = company.logo?.url ?? null;
+            logoPreview.value = company.logo?.autox140 ?? null;
         } else {
             resetForm();
         }

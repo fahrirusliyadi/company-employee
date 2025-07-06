@@ -17,12 +17,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    // Resource routes
     Route::resource('companies', CompanyController::class)
         ->except(['create', 'show', 'edit'])
         ->middlewareFor(['index'], 'can:read-companies')

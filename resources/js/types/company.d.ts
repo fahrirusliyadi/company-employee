@@ -8,6 +8,7 @@ export interface Company {
     logo: {
         url: string;
         '50x50': string;
+        'autox140': string;
     } | null;
 }
 

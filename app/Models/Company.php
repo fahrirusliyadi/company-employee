@@ -57,9 +57,10 @@ class Company extends Model implements HasMedia
         $this->addMediaCollection('logo')
             ->singleFile()
             ->registerMediaConversions(function ($media) {
-                $this->addMediaConversion('50x50')
-                    ->fit(Fit::Crop, 50, 50)
-                    ->nonQueued();
+                // Immediately apply conversions for displaying on the table
+                $this->addMediaConversion('50x50')->fit(Fit::Contain, 50, 50)->nonQueued();
+                // Queued conversions for displaying on the edit form
+                $this->addMediaConversion('autox140')->fit(Fit::Max, null, 140);
             });
     }
 }

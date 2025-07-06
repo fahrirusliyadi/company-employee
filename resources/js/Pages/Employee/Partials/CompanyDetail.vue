@@ -47,7 +47,7 @@ defineEmits<Emits>();
                     <div class="mx-auto max-h-[140px] max-w-[140px]">
                         <img
                             v-if="company?.logo"
-                            :src="company.logo.url"
+                            :src="company.logo.autox140"
                             alt="Logo Preview"
                             class="h-full w-full rounded-md object-contain"
                         />

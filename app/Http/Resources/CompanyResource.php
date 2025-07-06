@@ -25,7 +25,8 @@ class CompanyResource extends JsonResource
                 return $logo
                     ? [
                         'url' => $logo->getUrl(),
-                        '50x50' => $logo->getUrl('50x50'),
+                        '50x50' => $logo->getAvailableUrl(['50x50']),
+                        'autox140' => $logo->getAvailableUrl(['autox140']),
                     ]
                     : null;
             }),

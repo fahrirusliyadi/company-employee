@@ -2,11 +2,11 @@
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { Head, router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
+import type { Company, Employee, EmployeeFilters, PaginatedData } from '@/types';
 import EmployeeForm from './Partials/EmployeeForm.vue';
 import EmployeeTable from './Partials/EmployeeTable.vue';
 import DeleteEmployeeConfirmation from './Partials/DeleteEmployeeConfirmation.vue';
@@ -21,6 +21,7 @@ interface Props {
     employees: PaginatedData<Employee>;
     /** Filter parameters for pagination, search, and sorting */
     filters?: EmployeeFilters;
+    selected_company?: Company | null;
 }
 
 const props = defineProps<Props>();
@@ -35,8 +36,8 @@ const isLoading = ref(false);
 const isEmployeeFormOpen = ref(false);
 /** Visibility state for the delete confirmation modal. */
 const isDeleteConfirmationOpen = ref(false);
-/** Visibility state for the company detail modal. */
-const isCompanyDetailOpen = ref(false);
+/** Visibility state for the company detail modal based on selected_company presence. */
+const isCompanyDetailOpen = computed(() => !!props.selected_company);
 
 /**
  * Fetches employee data based on provided parameters.
@@ -82,7 +83,7 @@ const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
     const params: Record<string, any> = {
         page: pagination.current,
         per_page: pagination.pageSize,
-        search: search.value,
+        search: search.value || undefined,
     };
 
     const currentSorter = Array.isArray(sorter) ? sorter[0] : sorter;
@@ -127,21 +128,32 @@ const handleEmployeeFormClose = () => {
 
 /**
  * Handles the company detail event from the EmployeeTable component.
- * Sets the selected employee and makes the company detail modal visible.
+ * Navigates to the employees index with the company ID to view company details.
  * @param {Employee} employee - The employee object whose company is to be viewed.
  */
 const handleTableRowCompanyDetail = (employee: Employee) => {
-    selectedEmployee.value = employee;
-    isCompanyDetailOpen.value = true;
+    router.get(route('employees.index'), {
+        ...props.filters,
+        view_company_id: employee.company_id,
+    }, {
+        only: ['selected_company'],
+        preserveState: true,
+        preserveScroll: true,
+    })
 };
 
 /**
  * Handles the close event from the CompanyDetail component.
- * Hides the company detail modal and clears the selected employee.
+ * Navigates back to the employees index without the company view parameter.
  */
 const handleCompanyDetailClose = () => {
-    isCompanyDetailOpen.value = false;
-    selectedEmployee.value = null;
+    router.get(route('employees.index'), {
+        ...props.filters,
+    }, {
+        only: [],
+        preserveState: true,
+        preserveScroll: true,
+    });
 };
 
 /**
@@ -149,6 +161,8 @@ const handleCompanyDetailClose = () => {
  * This enables real-time search functionality as the user types.
  */
 watch(search, handleSearch);
+
+
 </script>
 
 <template>
@@ -199,8 +213,9 @@ watch(search, handleSearch);
                     @close="isDeleteConfirmationOpen = false"
                 />
                 <CompanyDetail
+                    v-if="selected_company"
                     :is-open="isCompanyDetailOpen"
-                    :company="selectedEmployee?.company"
+                    :company="selected_company"
                     @close="handleCompanyDetailClose"
                 />
             </div>

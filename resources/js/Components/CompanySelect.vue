@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { Spin } from 'ant-design-vue';
+import Select from '@/Components/Select.vue';
+import { Company } from '@/types';
 import { SelectValue } from 'ant-design-vue/es/select';
 import axios from 'axios';
 import { debounce, find } from 'lodash';
 import { computed, ref, watch } from 'vue';
-import { Company } from '@/types';
-import Select from '@/Components/Select.vue';
 
 /**
  * Props interface for the CompanySelect component.
@@ -52,8 +51,6 @@ const cachedCompanies = ref<Map<string, Company[]>>(new Map());
 const selectedCompany = ref<Company | null>(props.initialCompany || null);
 /** Reactive reference to store the current search term for filtering companies. */
 const searchTerm = ref<string>('');
-/** Reactive reference to indicate if data is currently being loaded from the API. */
-const isLoading = ref(false);
 
 /**
  * Computed property that transforms the `companies` array into an array of options
@@ -82,7 +79,6 @@ const options = computed(() => {
 
 /**
  * Fetches companies from the API based on a search term.
- * Sets `isLoading` to true during the fetch operation and handles errors.
  * @param {string} [search=''] - The search term to filter companies.
  * @returns {Promise<void>} A promise that resolves when the fetch operation is complete.
  */
@@ -91,8 +87,6 @@ const fetchCompanies = async (search: string = '') => {
         companies.value = cachedCompanies.value.get(search)!;
         return;
     }
-
-    isLoading.value = true;
 
     try {
         const response = await axios.get(route('internal.companies.options'), {
@@ -107,8 +101,6 @@ const fetchCompanies = async (search: string = '') => {
     } catch (error) {
         console.warn('Error fetching companies:', error);
         companies.value = [];
-    } finally {
-        isLoading.value = false;
     }
 };
 
@@ -170,11 +162,7 @@ watch(
         @change="handleChange"
         @search="handleSearch"
         @dropdown-visible-change="handleDropdownVisibleChange"
-    >
-        <template v-if="isLoading" #notFoundContent>
-            <Spin size="small" />
-        </template>
-    </Select>
+    />
 </template>
 
 <style lang="css" scoped>

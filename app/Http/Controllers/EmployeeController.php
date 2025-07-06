@@ -9,6 +9,8 @@ use App\Http\Requests\Employee\EmployeeIndexRequest;
 use App\Http\Requests\Employee\EmployeeStoreRequest;
 use App\Http\Requests\Employee\EmployeeUpdateRequest;
 use App\Exceptions\ApplicationException;
+use App\Http\Resources\CompanyResource;
+use App\Models\Company;
 use App\Notifications\Company\EmployeeAdded;
 use Inertia\Inertia;
 
@@ -22,7 +24,7 @@ class EmployeeController extends Controller
      */
     public function index(EmployeeIndexRequest $request)
     {
-        $query = Employee::with('company.media');
+        $query = Employee::with('company');
 
         // Handle search
         if ($request->has('search') && $request->input('search') !== null) {
@@ -44,12 +46,12 @@ class EmployeeController extends Controller
         }
 
         // Handle pagination
-        $perPage = $request->input('per_page', 10); // Default to 10 if not provided
-        $employees = $query->paginate($perPage);
+        $perPage = $request->input('per_page', 10);
 
         return Inertia::render('Employee/Index', [
-            'employees' => new EmployeeCollection($employees),
+            'employees' => fn() => new EmployeeCollection($query->paginate($perPage)),
             'filters' => $request->only(['page', 'per_page', 'search', 'sort_by', 'sort_direction']),
+            'selected_company' => fn() => $this->getSelectedCompany($request),
         ]);
     }
 
@@ -142,5 +144,19 @@ class EmployeeController extends Controller
         } catch (\Exception $e) {
             throw new ApplicationException('Failed to delete employee. Please try again.');
         }
+    }
+
+    /**
+     * Get the selected company for viewing details.
+     * Uses separate query to avoid unnecessary loading of media data since it's not needed in the table.
+     *
+     * @param  \App\Http\Requests\Employee\EmployeeIndexRequest  $request
+     * @return \App\Http\Resources\CompanyResource|null
+     */
+    private function getSelectedCompany(EmployeeIndexRequest $request): ?CompanyResource
+    {
+        $companyId = $request->input('view_company_id');
+        $company = $companyId ? Company::with('media')->find($companyId) : null;
+        return $company ? CompanyResource::make($company) : null;
     }
 }

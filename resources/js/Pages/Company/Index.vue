@@ -78,7 +78,7 @@ const handleTableChange = (pagination: any, _filters: any, sorter: any) => {
     const params: Record<string, any> = {
         page: pagination.current,
         per_page: pagination.pageSize,
-        search: search.value,
+        search: search.value || undefined,
     };
 
     const currentSorter = Array.isArray(sorter) ? sorter[0] : sorter;

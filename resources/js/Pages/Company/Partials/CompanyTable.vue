@@ -5,13 +5,13 @@ import {
     EllipsisOutlined,
 } from '@ant-design/icons-vue';
 import { Avatar, TableProps } from 'ant-design-vue';
-import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
-import type { Company, CompanyFilters, PaginatedData } from '@/types';
+import type { Company, PaginatedData } from '@/types';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownButton from '@/Components/DropdownButton.vue';
 import ExternalLink from '@/Components/ExternalLink.vue';
 import Table from '@/Components/Table.vue';
+import type { ColumnsType } from 'ant-design-vue/es/table';
 
 /**
  * Props for the Company Table component.
@@ -22,8 +22,8 @@ interface Props {
     companies: PaginatedData<Company>;
     /** Loading state for the table during data fetching operations. */
     isLoading?: boolean;
-    /** Filter parameters for pagination, search, and sorting */
-    filters?: CompanyFilters;
+    /** The columns to display in the table. */
+    columns: ColumnsType<Company>;
 }
 
 /**
@@ -70,69 +70,6 @@ const pagination = computed(() => ({
     position: ['bottomCenter'],
 }));
 
-/**
- * Computed table columns configuration for the Ant Design Vue table.
- * Defines column structure, sorting, responsiveness, and custom rendering for the companies table.
- * @returns {ColumnsType<Company>} Array of column configuration objects.
- */
-const columns = computed<ColumnsType<Company>>(() => [
-    {
-        title: '#',
-        key: 'index',
-        width: 56,
-        responsive: ['sm'],
-        customRender: ({ index }: { index: number }) => {
-            return (
-                (pagination.value.current - 1) * pagination.value.pageSize +
-                index +
-                1
-            );
-        },
-    },
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        sorter: true,
-        sortOrder:
-            props.filters?.sort_by === 'name'
-                ? props.filters.sort_direction === 'asc'
-                    ? 'ascend'
-                    : 'descend'
-                : null,
-    },
-    {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-        sorter: true,
-        ellipsis: true,
-        sortOrder:
-            props.filters?.sort_by === 'email'
-                ? props.filters.sort_direction === 'asc'
-                    ? 'ascend'
-                    : 'descend'
-                : null,
-    },
-    {
-        title: 'Website',
-        dataIndex: 'website',
-        key: 'website',
-        ellipsis: true,
-        sorter: true,
-        responsive: ['sm'],
-        sortOrder:
-            props.filters?.sort_by === 'website'
-                ? props.filters.sort_direction === 'asc'
-                    ? 'ascend'
-                    : 'descend'
-                : null,
-    },
-    {
-        key: 'actions',
-        width: 56,
-    },
-]);
 
 /**
  * Handles the change event of the Ant Design Vue table.
@@ -158,6 +95,7 @@ const handleTableChange: TableProps['onChange'] = (
         :row-key="(record: Company) => record.id"
         :pagination="pagination"
         :loading="isLoading"
+        :scroll="{ x: 'max-content' }"
         @change="handleTableChange"
     >
         <template #bodyCell="{ column, text, record }">

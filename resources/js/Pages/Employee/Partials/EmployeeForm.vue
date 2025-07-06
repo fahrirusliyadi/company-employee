@@ -113,7 +113,7 @@ watch(
 </script>
 
 <template>
-    <Modal :footer="null" :open="isOpen" @cancel="handleCancel">
+    <Modal centered :footer="null" :open="isOpen" @cancel="handleCancel">
         <form class="space-y-6" @submit.prevent="handleSubmit">
             <div class="space-y-1">
                 <h2 class="text-lg font-medium text-gray-900">

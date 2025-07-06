@@ -55,6 +55,7 @@ const closeModal = () => {
         <DangerButton @click="confirmUserDeletion">Delete Account</DangerButton>
 
         <Modal
+            centered
             :footer="null"
             :open="confirmingUserDeletion"
             @cancel="closeModal"

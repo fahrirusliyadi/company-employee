@@ -11,9 +11,9 @@ class ApplicationException extends Exception
     /**
      * Create a new application exception instance.
      */
-    public function __construct(string $message = 'An application error occurred.', int $code = 0, ?Exception $previous = null)
+    public function __construct(string $message = 'An application error occurred.', ?Exception $previous = null)
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, 0, $previous);
     }
 
     /**

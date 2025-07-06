@@ -7,7 +7,7 @@ import {
 import { TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
-import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
+import type { Employee, PaginatedData } from '@/types';
 import ButtonLink from '@/Components/ButtonLink.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownButton from '@/Components/DropdownButton.vue';
@@ -22,8 +22,8 @@ interface Props {
     employees: PaginatedData<Employee>;
     /** Loading state for the table during data fetching operations. */
     isLoading?: boolean;
-    /** Filter parameters for pagination, search, and sorting */
-    filters?: EmployeeFilters;
+    /** Columns configuration for the Ant Design Vue table. */
+    columns: ColumnsType<Employee>;
 }
 
 /**
@@ -72,77 +72,6 @@ const pagination = computed(() => ({
     position: ['bottomCenter'],
 }));
 
-/**
- * Computed table columns configuration for the Ant Design Vue table.
- * Defines column structure, sorting, responsiveness, and custom rendering for the employees table.
- * @returns {ColumnsType<Employee>} Array of column configuration objects.
- */
-const columns = computed<ColumnsType<Employee>>(() => [
-    {
-        title: '#',
-        key: 'index',
-        width: 56,
-        responsive: ['sm'],
-        customRender: ({ index }: { index: number }) => {
-            return (
-                (pagination.value.current - 1) * pagination.value.pageSize +
-                index +
-                1
-            );
-        },
-    },
-    {
-        title: 'Full Name',
-        dataIndex: 'first_name',
-        key: 'name',
-        sorter: true,
-        sortOrder:
-            props.filters?.sort_by === 'first_name'
-                ? props.filters.sort_direction === 'asc'
-                    ? 'ascend'
-                    : 'descend'
-                : null,
-        customRender: ({ record }: { record: Employee }) => {
-            return record.first_name + ' ' + record.last_name;
-        },
-    },
-    {
-        title: 'Company',
-        key: 'company',
-        responsive: ['md'],
-    },
-    {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-        sorter: true,
-        ellipsis: true,
-        sortOrder:
-            props.filters?.sort_by === 'email'
-                ? props.filters.sort_direction === 'asc'
-                    ? 'ascend'
-                    : 'descend'
-                : null,
-    },
-    {
-        title: 'Phone',
-        dataIndex: 'phone',
-        key: 'phone',
-        ellipsis: true,
-        sorter: true,
-        responsive: ['sm'],
-        sortOrder:
-            props.filters?.sort_by === 'phone'
-                ? props.filters.sort_direction === 'asc'
-                    ? 'ascend'
-                    : 'descend'
-                : null,
-    },
-    {
-        key: 'actions',
-        width: 56,
-    },
-]);
 
 /**
  * Handles the change event of the Ant Design Vue table.
@@ -168,6 +97,7 @@ const handleTableChange: TableProps['onChange'] = (
         :row-key="(record: Employee) => record.id"
         :pagination="pagination"
         :loading="isLoading"
+        :scroll="{ x: 'max-content' }"
         @change="handleTableChange"
     >
         <template #bodyCell="{ column, text, record }">

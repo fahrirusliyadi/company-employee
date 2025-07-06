@@ -81,7 +81,7 @@ class EmployeeController extends Controller
             return redirect()->route('employees.index')
                 ->with('success', 'Employee created successfully.');
         } catch (\Exception $e) {
-            throw new ApplicationException('Failed to create employee. Please try again.');
+            throw new ApplicationException('Failed to create employee. Please try again.', $e);
         }
     }
 
@@ -123,7 +123,7 @@ class EmployeeController extends Controller
             return redirect()->route('employees.index')
                 ->with('success', 'Employee updated successfully.');
         } catch (\Exception $e) {
-            throw new ApplicationException('Failed to update employee. Please try again.');
+            throw new ApplicationException('Failed to update employee. Please try again.', $e);
         }
     }
 
@@ -142,7 +142,7 @@ class EmployeeController extends Controller
             return redirect()->route('employees.index')
                 ->with('success', 'Employee deleted successfully.');
         } catch (\Exception $e) {
-            throw new ApplicationException('Failed to delete employee. Please try again.');
+            throw new ApplicationException('Failed to delete employee. Please try again.', $e);
         }
     }
 

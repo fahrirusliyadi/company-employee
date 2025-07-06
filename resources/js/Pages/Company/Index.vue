@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { PlusOutlined } from '@ant-design/icons-vue';
-import { Head, router } from '@inertiajs/vue3';
-import { debounce } from 'lodash';
-import { ref, watch } from 'vue';
+import ColumnVisibilitySelector from '@/Components/ColumnVisibilitySelector.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { useCompanyTableColumns } from '@/composables/useCompanyTableColumns';
 import type { Company, CompanyFilters, PaginatedData } from '@/types';
+import { PlusOutlined } from '@ant-design/icons-vue';
+import { Head, router } from '@inertiajs/vue3';
+import { debounce } from 'lodash';
+import { computed, ref, watch } from 'vue';
 import CompanyForm from './Partials/CompanyForm.vue';
 import CompanyTable from './Partials/CompanyTable.vue';
 import DeleteCompanyConfirmation from './Partials/DeleteCompanyConfirmation.vue';
@@ -33,6 +35,14 @@ const isLoading = ref(false);
 const isCompanyFormOpen = ref(false);
 /** Visibility state for the delete confirmation modal. */
 const isDeleteConfirmationOpen = ref(false);
+/** Array of visible column keys for the company table. */
+const visibleColumns = ref(['index', 'name', 'email', 'website', 'actions']);
+/** Use company table columns composable to get column definitions. */
+const { allColumns, columns } = useCompanyTableColumns(
+    computed(() => props.filters),
+    computed(() => props.companies.meta),
+    visibleColumns,
+);
 
 /**
  * Fetches company data based on provided parameters.
@@ -140,26 +150,28 @@ watch(search, handleSearch);
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                <div
-                    class="flex flex-col items-center justify-between gap-2 sm:flex-row"
-                >
-                    <PrimaryButton
-                        class="w-full justify-center gap-2 sm:order-1 sm:w-auto"
-                        @click="isCompanyFormOpen = true"
-                    >
-                        <PlusOutlined /> Create Company
-                    </PrimaryButton>
+                <div class="flex flex-wrap items-center gap-2">
                     <TextInput
                         v-model="search"
                         type="search"
                         placeholder="Search companies..."
-                        class="w-full sm:w-1/2 md:w-1/3"
+                        class="w-full sm:me-auto sm:w-1/3"
                     />
+                    <ColumnVisibilitySelector
+                        :columns="allColumns"
+                        v-model:visible-columns="visibleColumns"
+                    />
+                    <PrimaryButton
+                        class="grow justify-center gap-2 sm:grow-0"
+                        @click="isCompanyFormOpen = true"
+                    >
+                        <PlusOutlined /> Create Company
+                    </PrimaryButton>
                 </div>
                 <CompanyTable
                     :companies="companies"
                     :isLoading="isLoading"
-                    :filters="filters"
+                    :columns="columns"
                     @change="handleTableChange"
                     @row-edit="handleTableRowEdit"
                     @row-delete="handleTableRowDelete"

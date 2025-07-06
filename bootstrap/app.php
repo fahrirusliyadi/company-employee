@@ -46,8 +46,6 @@ return Application::configure(basePath: dirname(__DIR__))
         // Handle general exceptions for Inertia requests (must be last)
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             if ($request->header('X-Inertia')) {
-                // Log the exception for debugging purposes
-                Log::error('Unexpected error occurred', ['exception' => $e]);
                 return redirect()->back()
                     ->with('error', 'An unexpected error occurred. Please try again.')
                     ->withInput();

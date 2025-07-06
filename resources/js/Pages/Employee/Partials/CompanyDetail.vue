@@ -30,7 +30,7 @@ defineEmits<Emits>();
 </script>
 
 <template>
-    <Modal :footer="null" :open="props.isOpen" @cancel="$emit('close')">
+    <Modal centered :footer="null" :open="props.isOpen" @cancel="$emit('close')">
         <div class="space-y-6">
             <div class="space-y-1">
                 <h2 class="text-lg font-medium text-gray-900">

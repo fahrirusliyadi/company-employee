@@ -3,6 +3,7 @@ import { PlusOutlined } from '@ant-design/icons-vue';
 import { Head, router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import { ref, watch, computed } from 'vue';
+import ColumnVisibilitySelector from '@/Components/ColumnVisibilitySelector.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -11,6 +12,7 @@ import EmployeeForm from './Partials/EmployeeForm.vue';
 import EmployeeTable from './Partials/EmployeeTable.vue';
 import DeleteEmployeeConfirmation from './Partials/DeleteEmployeeConfirmation.vue';
 import CompanyDetail from './Partials/CompanyDetail.vue';
+import { useEmployeeTableColumns } from '@/composables/useEmployeeTableColumns';
 
 /**
  * Props for the Employee Index component.
@@ -38,6 +40,14 @@ const isEmployeeFormOpen = ref(false);
 const isDeleteConfirmationOpen = ref(false);
 /** Visibility state for the company detail modal based on selected_company presence. */
 const isCompanyDetailOpen = computed(() => !!props.selected_company);
+/** Array of visible column keys for the employee table. */
+const visibleColumns = ref(['index', 'name', 'company', 'email', 'phone', 'actions']);
+/** Use employee table columns composable to get column definitions. */
+const { allColumns, columns } = useEmployeeTableColumns(
+    computed(() => props.filters),
+    computed(() => props.employees.meta),
+    visibleColumns,
+);
 
 /**
  * Fetches employee data based on provided parameters.
@@ -177,26 +187,28 @@ watch(search, handleSearch);
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                <div
-                    class="flex flex-col items-center justify-between gap-2 sm:flex-row"
-                >
-                    <PrimaryButton
-                        class="w-full justify-center gap-2 sm:order-1 sm:w-auto"
-                        @click="isEmployeeFormOpen = true"
-                    >
-                        <PlusOutlined /> Create Employee
-                    </PrimaryButton>
+                <div class="flex flex-wrap items-center gap-2">
                     <TextInput
                         v-model="search"
                         type="search"
                         placeholder="Search employees..."
-                        class="w-full sm:w-1/2 md:w-1/3"
+                        class="w-full sm:me-auto sm:w-1/3"
                     />
+                    <ColumnVisibilitySelector
+                        :columns="allColumns"
+                        v-model:visible-columns="visibleColumns"
+                    />
+                    <PrimaryButton
+                        class="grow justify-center gap-2 sm:grow-0"
+                        @click="isEmployeeFormOpen = true"
+                    >
+                        <PlusOutlined /> Create Employee
+                    </PrimaryButton>
                 </div>
                 <EmployeeTable
                     :employees="employees"
                     :isLoading="isLoading"
-                    :filters="filters"
+                    :columns="columns"
                     @change="handleTableChange"
                     @row-edit="handleTableRowEdit"
                     @row-delete="handleTableRowDelete"

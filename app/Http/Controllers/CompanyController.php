@@ -82,7 +82,7 @@ class CompanyController extends Controller
             return redirect()->route('companies.index')
                 ->with('success', 'Company created successfully.');
         } catch (\Exception $e) {
-            throw new ApplicationException('Failed to create company. Please try again.');
+            throw new ApplicationException('Failed to create company. Please try again.', $e);
         }
     }
 
@@ -131,7 +131,7 @@ class CompanyController extends Controller
             return redirect()->route('companies.index')
                 ->with('success', 'Company updated successfully.');
         } catch (\Exception $e) {
-            throw new ApplicationException('Failed to update company. Please try again.');
+            throw new ApplicationException('Failed to update company. Please try again.', $e);
         }
     }
 
@@ -144,15 +144,17 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
+        if ($company->employees()->exists()) {
+            throw new ApplicationException('Cannot delete company with existing employees.');
+        }
+
         try {
-            DB::transaction(function () use ($company) {
-                $company->delete();
-            });
+            $company->delete();
 
             return redirect()->route('companies.index')
                 ->with('success', 'Company deleted successfully.');
         } catch (\Exception $e) {
-            throw new ApplicationException('Failed to delete company. Please try again.');
+            throw new ApplicationException('Failed to delete company. Please try again.', $e);
         }
     }
 }

@@ -6,7 +6,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Company } from '@/types';
 import { InboxOutlined } from '@ant-design/icons-vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { Modal, UploadDragger } from 'ant-design-vue';
 import { ref, watch } from 'vue';
 
@@ -32,6 +32,7 @@ interface Emits {
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
+const page = usePage();
 
 /**
  * Form instance for handling company creation
@@ -68,11 +69,17 @@ const resetForm = () => {
 const handleSubmit = () => {
     /**
      * Callback function executed on successful form submission.
-     * Closes the modal and resets the form fields.
+     * Only closes the modal and resets the form if there are no general errors.
      */
     const onSuccess = () => {
-        emit('close');
-        resetForm();
+        // Check if there's a general error flash message
+        const flash = page.props.flash as { error?: string };
+
+        // Only close the form if there's no general error
+        if (!flash?.error) {
+            emit('close');
+            resetForm();
+        }
     };
 
     if (props.company) {

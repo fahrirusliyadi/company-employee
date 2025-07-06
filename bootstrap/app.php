@@ -3,11 +3,12 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Log;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -24,6 +25,14 @@ return Application::configure(basePath: dirname(__DIR__))
             return $e->render($request);
         });
 
+        // Handle HTTP access denied exceptions (403 Forbidden) - thrown by can middleware
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, \Illuminate\Http\Request $request) {
+            if ($request->header('X-Inertia')) {
+                return redirect()->back()
+                    ->with('error', 'You do not have permission to perform this action.');
+            }
+        });
+
         // Handle validation exceptions for Inertia requests
         $exceptions->render(function (\Illuminate\Validation\ValidationException $e, \Illuminate\Http\Request $request) {
             if ($request->header('X-Inertia')) {
@@ -34,9 +43,11 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        // Handle general exceptions for Inertia requests
+        // Handle general exceptions for Inertia requests (must be last)
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
-            if ($request->header('X-Inertia') && !($e instanceof \Illuminate\Validation\ValidationException)) {
+            if ($request->header('X-Inertia')) {
+                // Log the exception for debugging purposes
+                Log::error('Unexpected error occurred', ['exception' => $e]);
                 return redirect()->back()
                     ->with('error', 'An unexpected error occurred. Please try again.')
                     ->withInput();

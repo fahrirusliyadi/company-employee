@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useFlashMessages } from '@/composables/useFlashMessages';
+import { usePermissions } from '@/composables/usePermissions';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -12,6 +13,9 @@ const showingNavigationDropdown = ref(false);
 
 // Initialize flash message handling
 useFlashMessages();
+
+// Initialize permission checking
+const { hasPermission } = usePermissions();
 </script>
 
 <template>
@@ -44,12 +48,14 @@ useFlashMessages();
                                     Dashboard
                                 </NavLink>
                                 <NavLink
+                                    v-if="hasPermission('read-companies')"
                                     :href="route('companies.index')"
                                     :active="route().current('companies.index')"
                                 >
                                     Companies
                                 </NavLink>
                                 <NavLink
+                                    v-if="hasPermission('read-employees')"
                                     :href="route('employees.index')"
                                     :active="route().current('employees.index')"
                                 >
@@ -163,12 +169,14 @@ useFlashMessages();
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
+                            v-if="hasPermission('read-companies')"
                             :href="route('companies.index')"
                             :active="route().current('companies.index')"
                         >
                             Companies
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
+                            v-if="hasPermission('read-employees')"
                             :href="route('employees.index')"
                             :active="route().current('employees.index')"
                         >

@@ -23,19 +23,29 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     // Resource routes
-    Route::resource('companies', CompanyController::class);
-    Route::resource('employees', EmployeeController::class);
-
-    // Internal endpoints for UI components
-    Route::prefix('internal')->controller(InternalCompanyController::class)->group(function () {
-        Route::get('/companies/options', 'options')->name('internal.companies.options');
-    });
+    Route::resource('companies', CompanyController::class)
+        ->except(['create', 'show', 'edit'])
+        ->middlewareFor(['index'], 'can:read-companies')
+        ->middlewareFor(['store'], 'can:create-companies')
+        ->middlewareFor(['update'], 'can:update-companies')
+        ->middlewareFor(['destroy'], 'can:delete-companies');
+    Route::resource('employees', EmployeeController::class)
+        ->except(['create', 'show', 'edit'])
+        ->middlewareFor(['index'], 'can:read-employees')
+        ->middlewareFor(['store'], 'can:create-employees')
+        ->middlewareFor(['update'], 'can:update-employees')
+        ->middlewareFor(['destroy'], 'can:delete-employees');
 
     // Profile routes
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
         Route::delete('/profile', 'destroy')->name('profile.destroy');
+    });
+
+    // Internal endpoints for UI components
+    Route::prefix('internal')->controller(InternalCompanyController::class)->group(function () {
+        Route::get('/companies/options', 'options')->name('internal.companies.options');
     });
 });
 

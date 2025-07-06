@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownButton from '@/Components/DropdownButton.vue';
+import ExternalLink from '@/Components/ExternalLink.vue';
+import type { Company, CompanyFilters, PaginatedData } from '@/types';
 import {
     DeleteOutlined,
     EditOutlined,
@@ -7,9 +11,6 @@ import {
 import { Avatar, Table, TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
-import type { Company, CompanyFilters, PaginatedData } from '@/types';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownButton from '@/Components/DropdownButton.vue';
 
 /**
  * Props for the Company Table component.
@@ -175,14 +176,9 @@ const handleTableChange: TableProps['onChange'] = (
                 </span>
             </template>
             <template v-else-if="column.key === 'website'">
-                <a
-                    v-if="text"
-                    :href="text"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
+                <ExternalLink v-if="text" :href="text">
                     {{ text }}
-                </a>
+                </ExternalLink>
             </template>
             <template v-else-if="column.key === 'actions'">
                 <Dropdown align="right" width="48">

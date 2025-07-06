@@ -22,10 +22,7 @@ class EmployeeResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'company' => $this->whenLoaded('company', function () {
-                return [
-                    'id' => $this->company->id,
-                    'name' => $this->company->name,
-                ];
+                return CompanyResource::make($this->company);
             }),
         ];
     }

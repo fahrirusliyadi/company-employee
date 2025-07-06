@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import ButtonLink from '@/Components/ButtonLink.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownButton from '@/Components/DropdownButton.vue';
+import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
 import {
     DeleteOutlined,
     EditOutlined,
@@ -7,9 +11,6 @@ import {
 import { Table, TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
-import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownButton from '@/Components/DropdownButton.vue';
 
 /**
  * Props for the Employee Table component.
@@ -35,6 +36,8 @@ interface Emits {
     (e: 'row-edit', employee: Employee): void;
     /** Emitted when the delete action is triggered for an employee */
     (e: 'row-delete', employee: Employee): void;
+    /** Emitted when the company detail action is triggered for an employee */
+    (e: 'row-company-detail', employee: Employee): void;
 }
 
 /**
@@ -167,7 +170,13 @@ const handleTableChange: TableProps['onChange'] = (
     >
         <template #bodyCell="{ column, text, record }">
             <template v-if="column.key === 'company'">
-                <span v-if="record.company">{{ record.company.name }}</span>
+                <ButtonLink
+                    v-if="record.company"
+                    class="text-start"
+                    @click="$emit('row-company-detail', record as Employee)"
+                >
+                    {{ record.company.name }}
+                </ButtonLink>
                 <span v-else class="text-gray-400">No company</span>
             </template>
             <template v-else-if="column.key === 'actions'">

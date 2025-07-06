@@ -10,6 +10,7 @@ import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
 import EmployeeForm from './Partials/EmployeeForm.vue';
 import EmployeeTable from './Partials/EmployeeTable.vue';
 import DeleteEmployeeConfirmation from './Partials/DeleteEmployeeConfirmation.vue';
+import CompanyDetail from './Partials/CompanyDetail.vue';
 
 /**
  * Props for the Employee Index component.
@@ -36,6 +37,8 @@ const isLoading = ref(false);
 const isEmployeeFormOpen = ref(false);
 /** Visibility state for the delete confirmation modal. */
 const isDeleteConfirmationOpen = ref(false);
+/** Visibility state for the company detail modal. */
+const isCompanyDetailOpen = ref(false);
 
 /**
  * Fetches employee data based on provided parameters.
@@ -125,6 +128,25 @@ const handleEmployeeFormClose = () => {
 };
 
 /**
+ * Handles the company detail event from the EmployeeTable component.
+ * Sets the selected employee and makes the company detail modal visible.
+ * @param {Employee} employee - The employee object whose company is to be viewed.
+ */
+const handleTableRowCompanyDetail = (employee: Employee) => {
+    selectedEmployee.value = employee;
+    isCompanyDetailOpen.value = true;
+};
+
+/**
+ * Handles the close event from the CompanyDetail component.
+ * Hides the company detail modal and clears the selected employee.
+ */
+const handleCompanyDetailClose = () => {
+    isCompanyDetailOpen.value = false;
+    selectedEmployee.value = null;
+};
+
+/**
  * Watches the search input for changes and triggers the debounced search handler.
  * This enables real-time search functionality as the user types.
  */
@@ -166,6 +188,7 @@ watch(search, handleSearch);
                     @change="handleTableChange"
                     @row-edit="handleTableRowEdit"
                     @row-delete="handleTableRowDelete"
+                    @row-company-detail="handleTableRowCompanyDetail"
                 />
                 <EmployeeForm
                     :employee="selectedEmployee"
@@ -177,6 +200,11 @@ watch(search, handleSearch);
                     :is-open="isDeleteConfirmationOpen"
                     :employee="selectedEmployee"
                     @close="isDeleteConfirmationOpen = false"
+                />
+                <CompanyDetail
+                    :is-open="isCompanyDetailOpen"
+                    :company="selectedEmployee?.company"
+                    @close="handleCompanyDetailClose"
                 />
             </div>
         </div>

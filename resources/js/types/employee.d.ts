@@ -1,4 +1,4 @@
-import type { ListFilters } from './index';
+import type { Company, ListFilters } from './index';
 
 export interface Employee {
     id: number;
@@ -7,10 +7,7 @@ export interface Employee {
     last_name: string;
     email: string | null;
     phone: string | null;
-    company?: {
-        id: number;
-        name: string;
-    };
+    company?: Company;
 }
 
 /**

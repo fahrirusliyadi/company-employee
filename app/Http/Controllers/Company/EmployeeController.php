@@ -22,7 +22,7 @@ class EmployeeController extends Controller
      */
     public function index(EmployeeIndexRequest $request)
     {
-        $query = Employee::with('company');
+        $query = Employee::with('company.media');
 
         // Handle search
         if ($request->has('search') && $request->input('search') !== null) {

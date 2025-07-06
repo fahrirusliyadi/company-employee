@@ -9,6 +9,7 @@ use App\Http\Requests\Employee\EmployeeIndexRequest;
 use App\Http\Requests\Employee\EmployeeStoreRequest;
 use App\Http\Requests\Employee\EmployeeUpdateRequest;
 use App\Exceptions\ApplicationException;
+use App\Notifications\Company\EmployeeAdded;
 use Inertia\Inertia;
 
 class EmployeeController extends Controller
@@ -72,7 +73,8 @@ class EmployeeController extends Controller
     public function store(EmployeeStoreRequest $request)
     {
         try {
-            Employee::create($request->validated());
+            $employee = Employee::create($request->validated());
+            $employee->company->notify(new EmployeeAdded($employee, $employee->company));
 
             return redirect()->route('employees.index')
                 ->with('success', 'Employee created successfully.');

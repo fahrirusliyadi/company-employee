@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -30,7 +31,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class Company extends Model implements HasMedia
 {
-    use InteractsWithMedia;
+    use InteractsWithMedia, Notifiable;
 
     /**
      * The attributes that are mass assignable.

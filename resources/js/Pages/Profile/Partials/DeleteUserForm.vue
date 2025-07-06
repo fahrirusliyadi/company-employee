@@ -60,7 +60,7 @@ const closeModal = () => {
             :open="confirmingUserDeletion"
             @cancel="closeModal"
         >
-            <h2 class="text-lg font-medium text-gray-900">
+            <h2 class="text-lg font-medium text-gray-900 me-8">
                 Are you sure you want to delete your account?
             </h2>
 

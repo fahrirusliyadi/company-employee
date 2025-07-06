@@ -121,7 +121,7 @@ const handleTableChange: TableProps['onChange'] = (
                 </ExternalLink>
             </template>
             <template v-else-if="column.key === 'actions'">
-                <Dropdown align="right" width="48">
+                <Dropdown placement="bottomRight" width="48">
                     <template #trigger>
                         <button aria-label="Actions">
                             <EllipsisOutlined />

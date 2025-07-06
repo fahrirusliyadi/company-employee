@@ -44,11 +44,11 @@ const handleDelete = () => {
 </script>
 
 <template>
-    <Modal centered :footer="null" :open="props.isOpen" @cancel="emit('close')">
+    <Modal centered :footer="null" :open="isOpen" @cancel="emit('close')">
         <div class="space-y-6">
             <div class="space-y-1">
-                <h2 class="text-lg font-medium text-gray-900">
-                    Are you sure you want to delete "{{ props.company?.name }}"?
+                <h2 class="text-lg font-medium text-gray-900 me-8">
+                    Are you sure you want to delete "{{ company?.name }}"?
                 </h2>
 
                 <p class="text-sm text-gray-600">

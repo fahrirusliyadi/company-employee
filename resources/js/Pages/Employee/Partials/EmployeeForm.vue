@@ -116,7 +116,7 @@ watch(
     <Modal centered :footer="null" :open="isOpen" @cancel="handleCancel">
         <form class="space-y-6" @submit.prevent="handleSubmit">
             <div class="space-y-1">
-                <h2 class="text-lg font-medium text-gray-900">
+                <h2 class="text-lg font-medium text-gray-900 me-8">
                     {{ employee ? 'Edit Employee' : 'Create Employee' }}
                 </h2>
 

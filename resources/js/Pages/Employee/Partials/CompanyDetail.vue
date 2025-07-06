@@ -25,15 +25,15 @@ interface Emits {
     (e: 'close'): void;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 defineEmits<Emits>();
 </script>
 
 <template>
-    <Modal centered :footer="null" :open="props.isOpen" @cancel="$emit('close')">
+    <Modal centered :footer="null" :open="isOpen" @cancel="$emit('close')">
         <div class="space-y-6">
             <div class="space-y-1">
-                <h2 class="text-lg font-medium text-gray-900">
+                <h2 class="text-lg font-medium text-gray-900 me-8">
                     {{ company?.name }}
                 </h2>
 

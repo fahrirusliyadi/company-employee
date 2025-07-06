@@ -27,8 +27,8 @@ const props = defineProps<Props>();
  * @type {Ref<string[]>}
  */
 const modelVisibleColumns = defineModel<string[]>('visibleColumns', {
-    default: () => []
-})
+    default: () => [],
+});
 
 /**
  * Computed property for hideable columns only.
@@ -80,38 +80,33 @@ const handleColumnToggle = (columnKey: string, e: CheckboxChangeEvent) => {
 </script>
 
 <template>
-    <Dropdown align="left" width="48" content-classes="py-2 bg-white">
+    <Dropdown placement="bottomLeft" width="48" content-classes="py-2 bg-white">
         <template #trigger>
             <SecondaryButton
                 class="gap-2 normal-case"
                 aria-label="Column visibility settings"
             >
                 Columns
-                <DownOutlined class="text-xs" />
+                <DownOutlined class="text-[10px]" />
             </SecondaryButton>
         </template>
 
         <template #content>
-            <div class="space-y-2 px-4 py-2">
-                <div
-                    v-for="column in hideableColumns"
-                    :key="column.key"
-                    class="flex items-center gap-2"
-                    @click.stop
-                >
-                    <Checkbox
-                        :id="`column-${column.key}`"
-                        :checked="isColumnVisible(column.key as string)"
-                        @change="
-                            (e: CheckboxChangeEvent) =>
-                                handleColumnToggle(column.key as string, e)
-                        "
-                    />
-                    <label :for="`column-${column.key}`" class="grow text-sm cursor-pointer">
-                        {{ column.title }}
-                    </label>
-                </div>
-            </div>
+            <label
+                v-for="column in hideableColumns"
+                :key="column.key"
+                class="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100"
+                @click.stop
+            >
+                <Checkbox
+                    :checked="isColumnVisible(column.key as string)"
+                    @change="
+                        (e: CheckboxChangeEvent) =>
+                            handleColumnToggle(column.key as string, e)
+                    "
+                />
+                {{ column.title }}
+            </label>
         </template>
     </Dropdown>
 </template>

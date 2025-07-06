@@ -47,7 +47,7 @@ const handleDelete = () => {
     <Modal centered :footer="null" :open="props.isOpen" @cancel="emit('close')">
         <div class="space-y-6">
             <div class="space-y-1">
-                <h2 class="text-lg font-medium text-gray-900">
+                <h2 class="text-lg font-medium text-gray-900 me-8">
                     Are you sure you want to delete "{{ props.employee?.first_name }} {{ props.employee?.last_name }}"?
                 </h2>
 

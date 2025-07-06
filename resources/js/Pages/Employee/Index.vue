@@ -185,8 +185,8 @@ watch(search, handleSearch);
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+        <div class="py-6 sm:py-8 xl:py-12">
+            <div class="mx-auto max-w-7xl space-y-6 px-6 lg:px-8">
                 <div class="flex flex-wrap items-center gap-2">
                     <TextInput
                         v-model="search"

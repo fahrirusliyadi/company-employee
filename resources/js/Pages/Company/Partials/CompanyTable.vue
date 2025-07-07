@@ -2,6 +2,7 @@
 import ButtonLink from '@/Components/ButtonLink.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownButton from '@/Components/DropdownButton.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
 import ExternalLink from '@/Components/ExternalLink.vue';
 import Table from '@/Components/Table.vue';
 import { usePermissions } from '@/composables/usePermissions';
@@ -10,6 +11,7 @@ import {
     DeleteOutlined,
     EditOutlined,
     EllipsisOutlined,
+    UserOutlined,
 } from '@ant-design/icons-vue';
 import { Avatar, TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
@@ -132,6 +134,18 @@ const handleTableChange: TableProps['onChange'] = (
                         </ButtonLink>
                     </template>
                     <template #content>
+                        <DropdownLink
+                            v-if="hasPermission('read-employees')"
+                            class="flex items-center gap-2"
+                            :href="
+                                route('employees.index', {
+                                    company_id: record.id,
+                                })
+                            "
+                        >
+                            <UserOutlined />
+                            View Employees
+                        </DropdownLink>
                         <DropdownButton
                             v-if="hasPermission('update-companies')"
                             class="flex items-center gap-2"

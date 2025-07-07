@@ -26,6 +26,11 @@ class EmployeeController extends Controller
     {
         $query = Employee::with('company');
 
+        // Handle company filter
+        if ($request->has('company_id') && $request->input('company_id') !== null) {
+            $query->where('company_id', $request->input('company_id'));
+        }
+
         // Handle search
         if ($request->has('search') && $request->input('search') !== null) {
             $search = $request->input('search');
@@ -50,7 +55,7 @@ class EmployeeController extends Controller
 
         return Inertia::render('Employee/Index', [
             'employees' => fn() => new EmployeeCollection($query->paginate($perPage)),
-            'filters' => $request->only(['page', 'per_page', 'search', 'sort_by', 'sort_direction']),
+            'filters' => $request->only(['page', 'per_page', 'search', 'sort_by', 'sort_direction', 'company_id']),
             'selected_company' => fn() => $this->getSelectedCompany($request),
         ]);
     }

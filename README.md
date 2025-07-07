@@ -12,45 +12,46 @@ A company and employee management system built with Laravel, Vue.js, and Inertia
 
 ### Quick Start
 
-1. **Clone and install dependencies:**
-   ```bash
-   git clone https://bitbucket.org/friskamax/gr-tech-technical.git
-   cd gr-tech-technical
-   composer install
-   pnpm install
-   ```
+#### 1. Clone and install dependencies:
+```bash
+git clone https://bitbucket.org/friskamax/gr-tech-technical.git
+cd gr-tech-technical
+composer install
+pnpm install
+```
 
-2. **Environment setup:**
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-   
-   **Required environment variables:**
-   - `APP_KEY` - Generated automatically by `php artisan key:generate`
-   - `MAIL_MAILER=smtp` - Mail driver (example using Mailtrap)
-   - `MAIL_HOST=sandbox.smtp.mailtrap.io` - SMTP host
-   - `MAIL_USERNAME=<your_mailtrap_username>` - SMTP username
-   - `MAIL_PASSWORD=<your_mailtrap_password>` - SMTP password
+#### 2. Environment setup:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-3. **Database setup:**
-   ```bash
-   php artisan migrate --seed
-   ```
+Required environment variables:
 
-4. **Link storage:**
-   ```bash
-   php artisan storage:link
-   ```
+- `APP_KEY` - Generated automatically by `php artisan key:generate`
+- `MAIL_MAILER=smtp` - Mail driver (example using Mailtrap)
+- `MAIL_HOST=sandbox.smtp.mailtrap.io` - SMTP host
+- `MAIL_USERNAME=<your_mailtrap_username>` - SMTP username
+- `MAIL_PASSWORD=<your_mailtrap_password>` - SMTP password
 
-4. **Start development servers:**
-   ```bash
-   composer run dev
-   ```
-   This runs Laravel server, queue worker, logs, and Vite dev server concurrently.
+#### 3. Database setup:
+```bash
+php artisan migrate --seed
+```
 
-5. **Access the application:**
-   http://localhost:8000
+#### 4. Link storage:
+```bash
+php artisan storage:link
+```
+
+#### 4. Start development servers:
+```bash
+composer run dev
+```
+This runs Laravel server, queue worker, logs, and Vite dev server concurrently.
+
+#### 5. Access the application:
+http://localhost:8000
 
 ## About Laravel
 

@@ -7,6 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { configProviderProps } from './config/antd';
+import { colors } from './config/theme';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -61,6 +62,6 @@ createInertiaApp({
      * @property {string} color - The color of the progress bar.
      */
     progress: {
-        color: '#4B5563',
+        color: colors.primary[400],
     },
 });

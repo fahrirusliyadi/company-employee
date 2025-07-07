@@ -183,6 +183,7 @@ watch(
                 <TextInput
                     id="phone"
                     v-model="form.phone"
+                    type="tel"
                     class="w-full"
                     placeholder="Enter phone number"
                 />

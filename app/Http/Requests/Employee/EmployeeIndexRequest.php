@@ -19,6 +19,7 @@ class EmployeeIndexRequest extends FormRequest
             'sort_by' => ['nullable', 'string', 'in:first_name,email,phone'],
             'sort_direction' => ['nullable', 'string', 'in:asc,desc'],
             'search' => ['nullable', 'string', 'max:255'],
+            'company_id' => ['nullable', 'integer', 'exists:companies,id'],
             'view_company_id' => ['nullable', 'integer', 'exists:companies,id'],
         ];
     }

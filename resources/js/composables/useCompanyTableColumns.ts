@@ -1,7 +1,7 @@
+import { usePermissions } from '@/composables/usePermissions';
 import type { Company, CompanyFilters, PaginatedData } from '@/types';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed, Ref, type ComputedRef } from 'vue';
-import { usePermissions } from '@/composables/usePermissions';
 
 /**
  * Composable for company table columns configuration.
@@ -67,7 +67,13 @@ export function useCompanyTableColumns(
             },
         ];
 
-        if (hasAnyPermission(['update-companies', 'delete-companies'])) {
+        if (
+            hasAnyPermission([
+                'read-employees',
+                'update-companies',
+                'delete-companies',
+            ])
+        ) {
             columns.push({
                 key: 'actions',
                 width: 56,

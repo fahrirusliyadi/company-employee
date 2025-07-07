@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { useForm, usePage } from '@inertiajs/vue3';
-import { Modal } from 'ant-design-vue';
-import { watch } from 'vue';
-import { Employee } from '@/types';
+import CompanySelect from '@/Components/CompanySelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import CompanySelect from '@/Components/CompanySelect.vue';
+import { Employee } from '@/types';
+import { LoadingOutlined } from '@ant-design/icons-vue';
+import { useForm, usePage } from '@inertiajs/vue3';
+import { Modal } from 'ant-design-vue';
+import { watch } from 'vue';
 
 /**
  * Component props interface
@@ -116,8 +117,8 @@ watch(
     <Modal centered :footer="null" :open="isOpen" @cancel="handleCancel">
         <form class="space-y-6" @submit.prevent="handleSubmit">
             <div class="space-y-1">
-                <h2 class="text-lg font-medium text-gray-900 me-8">
-                    {{ employee ? 'Edit Employee' : 'Create Employee' }}
+                <h2 class="me-8 text-lg font-medium text-gray-900">
+                    {{ employee ? 'Edit Employee' : 'Add Employee' }}
                 </h2>
 
                 <p class="text-sm text-gray-600">
@@ -194,10 +195,12 @@ watch(
                 </SecondaryButton>
                 <PrimaryButton
                     type="submit"
-                    :class="{ 'opacity-25': form.processing }"
+                    class="gap-2"
+                    :class="{ 'cursor-wait opacity-50': form.processing }"
                     :disabled="form.processing"
                 >
-                    {{ employee ? 'Update Employee' : 'Create Employee' }}
+                    <LoadingOutlined v-if="form.processing" />
+                    {{ employee ? 'Update Employee' : 'Add Employee' }}
                 </PrimaryButton>
             </div>
         </form>

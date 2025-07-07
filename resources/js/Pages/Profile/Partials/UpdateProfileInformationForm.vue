@@ -3,6 +3,8 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { PageProps } from '@/types';
+import { LoadingOutlined } from '@ant-design/icons-vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 defineProps<{
@@ -10,7 +12,7 @@ defineProps<{
     status?: String;
 }>();
 
-const user = usePage().props.auth.user;
+const user = usePage<PageProps>().props.auth.user;
 
 const form = useForm({
     name: user.name,
@@ -87,7 +89,14 @@ const form = useForm({
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton
+                    class="gap-2"
+                    :class="{ 'cursor-wait opacity-50': form.processing }"
+                    :disabled="form.processing"
+                >
+                    <LoadingOutlined v-if="form.processing" />
+                    Save
+                </PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

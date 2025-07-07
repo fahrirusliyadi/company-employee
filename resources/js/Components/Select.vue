@@ -3,7 +3,19 @@ import { Select } from 'ant-design-vue';
 </script>
 
 <template>
-    <Select v-bind="$attrs">
+    <!--
+      The Select component acts as a wrapper for Ant Design Vue's Select.
+      All props, events, and slots are implicitly passed down to the A-Select component.
+      This allows for full flexibility of the Ant Design Vue Select API while
+      maintaining a consistent look and feel through scoped styles.
+    -->
+    <Select>
+        <!--
+          This loop iterates over all slots passed to this component and
+          forwards them to the underlying Ant Design Vue Select component.
+          This ensures that any content provided via slots is rendered correctly
+          by the Ant Design Vue component.
+        -->
         <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
             <slot :name="slot" v-bind="scope" />
         </template>
@@ -12,7 +24,7 @@ import { Select } from 'ant-design-vue';
 
 <style scoped>
 .ant-select {
-    font-size: 1rem;
+    @apply text-base;
 }
 
 .ant-select :deep(.ant-select-selector) {
@@ -21,11 +33,11 @@ import { Select } from 'ant-design-vue';
 }
 
 .ant-select :deep(.ant-select-selector) .ant-select-selection-search-input {
-    height: 40px;
+    @apply h-10;
 }
 
 .ant-select :deep(.ant-select-selector) .ant-select-selection-placeholder,
 .ant-select :deep(.ant-select-selector) .ant-select-selection-item {
-    line-height: 40px;
+    @apply leading-10;
 }
 </style>

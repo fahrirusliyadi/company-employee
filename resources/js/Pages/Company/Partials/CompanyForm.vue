@@ -5,7 +5,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Company } from '@/types';
-import { InboxOutlined } from '@ant-design/icons-vue';
+import { InboxOutlined, LoadingOutlined } from '@ant-design/icons-vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { Modal, UploadDragger } from 'ant-design-vue';
 import { ref, watch } from 'vue';
@@ -188,7 +188,7 @@ watch(
 
                 <UploadDragger
                     class="block"
-                    accept=".png,.jpg,.jpeg,.svg"
+                    accept=".png,.jpg,.jpeg"
                     :max-count="1"
                     :show-upload-list="false"
                     :beforeUpload="() => false"
@@ -207,7 +207,7 @@ watch(
                         Click or drag file to this area to upload
                     </p>
                     <p class="ant-upload-hint">
-                        Accepts PNG, JPG, and SVG formats only.
+                        Accepts JPG and PNG formats only.
                     </p>
                 </UploadDragger>
                 <InputError :message="form.errors.logo" />
@@ -219,10 +219,11 @@ watch(
                 </SecondaryButton>
 
                 <PrimaryButton
-                    class="ms-3"
-                    :class="{ 'opacity-25': form.processing }"
+                    class="ms-3 gap-2"
+                    :class="{ 'cursor-wait opacity-50': form.processing }"
                     :disabled="form.processing"
                 >
+                    <LoadingOutlined v-if="form.processing" />
                     {{ company ? 'Update Company' : 'Create Company' }}
                 </PrimaryButton>
             </div>

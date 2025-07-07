@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import Link from '@/Components/Link.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { LoadingOutlined } from '@ant-design/icons-vue';
+import { Head, useForm } from '@inertiajs/vue3';
 
 defineProps<{
     canResetPassword?: boolean;
@@ -31,8 +33,16 @@ const submit = () => {
     <GuestLayout>
         <Head title="Log in" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
+        <div class="mb-6 space-y-2">
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">
+                Log in to your account
+            </h1>
+            <p class="text-sm text-gray-600">
+                Enter your credentials to log in to your account.
+            </p>
+            <div v-if="status" class="text-sm font-medium text-green-600">
+                {{ status }}
+            </div>
         </div>
 
         <form @submit.prevent="submit">
@@ -70,9 +80,7 @@ const submit = () => {
             <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Remember me</span
-                    >
+                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
                 </label>
             </div>
 
@@ -80,16 +88,17 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="text-sm text-gray-600"
                 >
                     Forgot your password?
                 </Link>
 
                 <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
+                    class="ms-4 gap-2"
+                    :class="{ 'cursor-wait opacity-50': form.processing }"
                     :disabled="form.processing"
                 >
+                    <LoadingOutlined v-if="form.processing" />
                     Log in
                 </PrimaryButton>
             </div>

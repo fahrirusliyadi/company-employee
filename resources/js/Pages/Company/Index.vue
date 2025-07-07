@@ -8,6 +8,7 @@ import type { Company, CompanyFilters, PaginatedData } from '@/types';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { Head, router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
+import { usePermissions } from '@/composables/usePermissions';
 import { computed, ref, watch } from 'vue';
 import CompanyForm from './Partials/CompanyForm.vue';
 import CompanyTable from './Partials/CompanyTable.vue';
@@ -37,6 +38,8 @@ const isCompanyFormOpen = ref(false);
 const isDeleteConfirmationOpen = ref(false);
 /** Array of visible column keys for the company table. */
 const visibleColumns = ref(['index', 'name', 'email', 'website', 'actions']);
+/** Use permissions composable to check user permissions. */
+const { hasPermission } = usePermissions();
 /** Use company table columns composable to get column definitions. */
 const { allColumns, columns } = useCompanyTableColumns(
     computed(() => props.filters),
@@ -162,6 +165,7 @@ watch(search, handleSearch);
                         v-model:visible-columns="visibleColumns"
                     />
                     <PrimaryButton
+                        v-if="hasPermission('create-companies')"
                         class="grow justify-center gap-2 sm:grow-0"
                         @click="isCompanyFormOpen = true"
                     >

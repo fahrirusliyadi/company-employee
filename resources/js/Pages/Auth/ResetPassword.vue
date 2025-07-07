@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { LoadingOutlined } from '@ant-design/icons-vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{
@@ -30,6 +31,15 @@ const submit = () => {
 <template>
     <GuestLayout>
         <Head title="Reset Password" />
+
+        <div class="mb-6 space-y-2">
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">
+                Reset Password
+            </h1>
+            <p class="text-sm text-gray-600">
+                Please enter your new password to reset your account password.
+            </p>
+        </div>
 
         <form @submit.prevent="submit">
             <div>
@@ -86,9 +96,11 @@ const submit = () => {
 
             <div class="mt-4 flex items-center justify-end">
                 <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
+                    class="gap-2"
+                    :class="{ 'cursor-wait opacity-50': form.processing }"
                     :disabled="form.processing"
                 >
+                    <LoadingOutlined v-if="form.processing" />
                     Reset Password
                 </PrimaryButton>
             </div>

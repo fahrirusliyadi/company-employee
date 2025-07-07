@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Modal } from 'ant-design-vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { Employee } from '@/types';
+import { LoadingOutlined } from '@ant-design/icons-vue';
 import { router } from '@inertiajs/vue3';
+import { Modal } from 'ant-design-vue';
 import { ref } from 'vue';
 
 interface Props {
@@ -44,11 +45,12 @@ const handleDelete = () => {
 </script>
 
 <template>
-    <Modal centered :footer="null" :open="props.isOpen" @cancel="emit('close')">
+    <Modal centered :footer="null" :open="isOpen" @cancel="emit('close')">
         <div class="space-y-6">
             <div class="space-y-1">
-                <h2 class="text-lg font-medium text-gray-900 me-8">
-                    Are you sure you want to delete "{{ props.employee?.first_name }} {{ props.employee?.last_name }}"?
+                <h2 class="me-8 text-lg font-medium text-gray-900">
+                    Are you sure you want to delete "{{ employee?.first_name }}
+                    {{ employee?.last_name }}"?
                 </h2>
 
                 <p class="text-sm text-gray-600">
@@ -61,10 +63,11 @@ const handleDelete = () => {
                 <SecondaryButton @click="emit('close')">Cancel</SecondaryButton>
                 <DangerButton
                     @click="handleDelete"
-                    class="ml-2"
-                    :class="{ 'opacity-25': isDeleting }"
+                    class="ml-2 gap-2"
+                    :class="{ 'cursor-wait opacity-50': isDeleting }"
                     :disabled="isDeleting"
                 >
+                    <LoadingOutlined v-if="isDeleting" />
                     Delete Employee
                 </DangerButton>
             </div>

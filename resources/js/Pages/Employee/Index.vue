@@ -6,6 +6,7 @@ import { ref, watch, computed } from 'vue';
 import ColumnVisibilitySelector from '@/Components/ColumnVisibilitySelector.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { usePermissions } from '@/composables/usePermissions';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { Company, Employee, EmployeeFilters, PaginatedData } from '@/types';
 import EmployeeForm from './Partials/EmployeeForm.vue';
@@ -38,10 +39,12 @@ const isLoading = ref(false);
 const isEmployeeFormOpen = ref(false);
 /** Visibility state for the delete confirmation modal. */
 const isDeleteConfirmationOpen = ref(false);
-/** Visibility state for the company detail modal based on selected_company presence. */
-const isCompanyDetailOpen = computed(() => !!props.selected_company);
+/** Visibility state for the company detail modal. */
+const isCompanyDetailOpen = ref(!!props.selected_company);
 /** Array of visible column keys for the employee table. */
 const visibleColumns = ref(['index', 'name', 'company', 'email', 'phone', 'actions']);
+/** Use permissions composable to check user permissions. */
+const { hasPermission } = usePermissions();
 /** Use employee table columns composable to get column definitions. */
 const { allColumns, columns } = useEmployeeTableColumns(
     computed(() => props.filters),
@@ -157,6 +160,7 @@ const handleTableRowCompanyDetail = (employee: Employee) => {
  * Navigates back to the employees index without the company view parameter.
  */
 const handleCompanyDetailClose = () => {
+    isCompanyDetailOpen.value = false;
     router.get(route('employees.index'), {
         ...props.filters,
     }, {
@@ -172,7 +176,13 @@ const handleCompanyDetailClose = () => {
  */
 watch(search, handleSearch);
 
-
+/**
+ * Watches the selected_company prop to update the company detail modal visibility.
+ * If selected_company is set, opens the company detail modal; otherwise, closes it.
+ */
+watch(() => props.selected_company, (newCompany) => {
+    isCompanyDetailOpen.value = !!newCompany;
+});
 </script>
 
 <template>
@@ -199,10 +209,11 @@ watch(search, handleSearch);
                         v-model:visible-columns="visibleColumns"
                     />
                     <PrimaryButton
+                        v-if="hasPermission('create-employees')"
                         class="grow justify-center gap-2 sm:grow-0"
                         @click="isEmployeeFormOpen = true"
                     >
-                        <PlusOutlined /> Create Employee
+                        <PlusOutlined /> Add Employee
                     </PrimaryButton>
                 </div>
                 <EmployeeTable

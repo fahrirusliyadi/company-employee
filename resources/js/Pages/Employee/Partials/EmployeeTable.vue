@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import ButtonLink from '@/Components/ButtonLink.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownButton from '@/Components/DropdownButton.vue';
+import Table from '@/Components/Table.vue';
+import { usePermissions } from '@/composables/usePermissions';
+import type { Employee, PaginatedData } from '@/types';
 import {
     DeleteOutlined,
     EditOutlined,
@@ -7,11 +13,6 @@ import {
 import { TableProps } from 'ant-design-vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed } from 'vue';
-import type { Employee, PaginatedData } from '@/types';
-import ButtonLink from '@/Components/ButtonLink.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownButton from '@/Components/DropdownButton.vue';
-import Table from '@/Components/Table.vue';
 
 /**
  * Props for the Employee Table component.
@@ -72,6 +73,8 @@ const pagination = computed(() => ({
     position: ['bottomCenter'],
 }));
 
+/** Use permissions composable to check user permissions. */
+const { hasPermission } = usePermissions();
 
 /**
  * Handles the change event of the Ant Design Vue table.
@@ -114,18 +117,20 @@ const handleTableChange: TableProps['onChange'] = (
             <template v-else-if="column.key === 'actions'">
                 <Dropdown placement="bottomRight" width="48">
                     <template #trigger>
-                        <button aria-label="Actions">
+                        <ButtonLink aria-label="Actions" class="no-underline">
                             <EllipsisOutlined />
-                        </button>
+                        </ButtonLink>
                     </template>
                     <template #content>
                         <DropdownButton
+                            v-if="hasPermission('update-employees')"
                             class="flex items-center gap-2"
                             @click="$emit('row-edit', record as Employee)"
                         >
                             <EditOutlined /> Edit Employee
                         </DropdownButton>
                         <DropdownButton
+                            v-if="hasPermission('delete-employees')"
                             class="flex items-center gap-2 text-red-600 hover:text-red-800"
                             @click="$emit('row-delete', record as Employee)"
                         >

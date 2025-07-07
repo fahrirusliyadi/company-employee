@@ -81,7 +81,7 @@ class EmployeeController extends Controller
             return redirect()->route('employees.index')
                 ->with('success', 'Employee created successfully.');
         } catch (\Exception $e) {
-            throw new ApplicationException('Failed to create employee. Please try again.', $e);
+            throw new ApplicationException('Failed to add employee. Please try again.', $e);
         }
     }
 

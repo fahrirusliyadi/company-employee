@@ -1,6 +1,7 @@
 import type { Company, CompanyFilters, PaginatedData } from '@/types';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed, Ref, type ComputedRef } from 'vue';
+import { usePermissions } from '@/composables/usePermissions';
 
 /**
  * Composable for company table columns configuration.
@@ -14,6 +15,8 @@ export function useCompanyTableColumns(
     meta?: ComputedRef<PaginatedData<unknown>['meta'] | undefined>,
     visibleColumns?: Ref<string[]>,
 ) {
+    const { hasAnyPermission } = usePermissions();
+
     const sortOrder = (key: string) =>
         filters?.value?.sort_by === key
             ? filters.value.sort_direction === 'asc'
@@ -24,48 +27,54 @@ export function useCompanyTableColumns(
     /**
      * All available table columns configuration.
      */
-    const allColumns = computed<ColumnsType<Company>>(() => [
-        {
-            title: '#',
-            key: 'index',
-            width: 56,
-            customRender: ({ index }: { index: number }) => {
-                if (!meta?.value) return index + 1;
-                return (
-                    (meta.value.current_page - 1) * meta.value.per_page +
-                    index +
-                    1
-                );
+    const allColumns = computed<ColumnsType<Company>>(() => {
+        const columns: ColumnsType<Company> = [
+            {
+                title: '#',
+                key: 'index',
+                width: 56,
+                customRender: ({ index }: { index: number }) => {
+                    if (!meta?.value) return index + 1;
+                    return (
+                        (meta.value.current_page - 1) * meta.value.per_page +
+                        index +
+                        1
+                    );
+                },
             },
-        },
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            sorter: true,
-            sortOrder: sortOrder('name'),
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            sorter: true,
-            ellipsis: true,
-            sortOrder: sortOrder('email'),
-        },
-        {
-            title: 'Website',
-            dataIndex: 'website',
-            key: 'website',
-            ellipsis: true,
-            sorter: true,
-            sortOrder: sortOrder('website'),
-        },
-        {
-            key: 'actions',
-            width: 56,
-        },
-    ]);
+            {
+                title: 'Name',
+                dataIndex: 'name',
+                key: 'name',
+                sorter: true,
+                sortOrder: sortOrder('name'),
+            },
+            {
+                title: 'Email',
+                dataIndex: 'email',
+                key: 'email',
+                sorter: true,
+                ellipsis: true,
+                sortOrder: sortOrder('email'),
+            },
+            {
+                title: 'Website',
+                dataIndex: 'website',
+                key: 'website',
+                ellipsis: true,
+                sorter: true,
+                sortOrder: sortOrder('website'),
+            },
+        ];
+
+        if (hasAnyPermission(['update-companies', 'delete-companies'])) {
+            columns.push({
+                key: 'actions',
+                width: 56,
+            });
+        }
+        return columns;
+    });
 
     /**
      * Filtered columns based on visibility settings.

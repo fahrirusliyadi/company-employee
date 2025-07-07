@@ -13,12 +13,12 @@ useFlashMessages();
     >
         <div>
             <Link href="/">
-                <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
+                <ApplicationLogo class="h-16 w-auto fill-current text-gray-500" />
             </Link>
         </div>
 
         <div
-            class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg"
+            class="mt-10 w-full overflow-hidden bg-white p-8 shadow-sm sm:max-w-md sm:rounded-lg"
         >
             <slot />
         </div>

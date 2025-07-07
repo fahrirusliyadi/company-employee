@@ -1,4 +1,5 @@
 import type { ConfigProviderProps } from 'ant-design-vue/es/config-provider/context';
+import { colors } from './theme';
 
 /**
  * Configuration properties for Ant Design Vue's ConfigProvider.
@@ -9,10 +10,11 @@ import type { ConfigProviderProps } from 'ant-design-vue/es/config-provider/cont
 export const configProviderProps: ConfigProviderProps = {
     theme: {
         token: {
-            colorPrimary: '#6366f1',
-            colorTextPlaceholder: '#6b7280',
-            controlOutline: '#6366f1',
+            colorTextBase: colors.gray[700],
+            colorPrimary: colors.primary[500],
+            colorTextPlaceholder: colors.gray[500],
+            controlOutline: colors.primary[500],
             controlOutlineWidth: 1,
-        }
+        },
     },
 };

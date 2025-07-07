@@ -1,17 +1,19 @@
 <script setup lang="ts">
+import ButtonLink from '@/Components/ButtonLink.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownButton from '@/Components/DropdownButton.vue';
+import ExternalLink from '@/Components/ExternalLink.vue';
+import Table from '@/Components/Table.vue';
+import { usePermissions } from '@/composables/usePermissions';
+import type { Company, PaginatedData } from '@/types';
 import {
     DeleteOutlined,
     EditOutlined,
     EllipsisOutlined,
 } from '@ant-design/icons-vue';
 import { Avatar, TableProps } from 'ant-design-vue';
-import { computed } from 'vue';
-import type { Company, PaginatedData } from '@/types';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownButton from '@/Components/DropdownButton.vue';
-import ExternalLink from '@/Components/ExternalLink.vue';
-import Table from '@/Components/Table.vue';
 import type { ColumnsType } from 'ant-design-vue/es/table';
+import { computed } from 'vue';
 
 /**
  * Props for the Company Table component.
@@ -70,6 +72,8 @@ const pagination = computed(() => ({
     position: ['bottomCenter'],
 }));
 
+/** Use permissions composable to check user permissions. */
+const { hasPermission } = usePermissions();
 
 /**
  * Handles the change event of the Ant Design Vue table.
@@ -123,18 +127,20 @@ const handleTableChange: TableProps['onChange'] = (
             <template v-else-if="column.key === 'actions'">
                 <Dropdown placement="bottomRight" width="48">
                     <template #trigger>
-                        <button aria-label="Actions">
+                        <ButtonLink aria-label="Actions" class="no-underline">
                             <EllipsisOutlined />
-                        </button>
+                        </ButtonLink>
                     </template>
                     <template #content>
                         <DropdownButton
+                            v-if="hasPermission('update-companies')"
                             class="flex items-center gap-2"
                             @click="$emit('row-edit', record as Company)"
                         >
                             <EditOutlined /> Edit Company
                         </DropdownButton>
                         <DropdownButton
+                            v-if="hasPermission('delete-companies')"
                             class="flex items-center gap-2 text-red-600 hover:text-red-800"
                             @click="$emit('row-delete', record as Company)"
                         >

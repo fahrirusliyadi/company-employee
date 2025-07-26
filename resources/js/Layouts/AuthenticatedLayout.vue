@@ -71,13 +71,17 @@ const { hasPermission } = usePermissions();
                             <div class="relative ms-3">
                                 <Dropdown placement="bottomRight" width="48">
                                     <template #trigger>
-                                        <span class="inline-flex items-center rounded-md">
+                                        <span
+                                            class="inline-flex items-center rounded-md"
+                                        >
                                             <button
                                                 type="button"
                                                 class="inline-flex items-center gap-2 rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                             >
                                                 {{ page.props.auth.user.name }}
-                                                <DownOutlined class="text-[10px]" />
+                                                <DownOutlined
+                                                    class="text-[10px]"
+                                                />
                                             </button>
                                         </span>
                                     </template>

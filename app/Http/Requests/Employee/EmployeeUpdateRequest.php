@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Employee;
 
-use App\Http\Requests\Employee\EmployeeRequest;
 use Illuminate\Validation\Rule;
 
 class EmployeeUpdateRequest extends EmployeeRequest

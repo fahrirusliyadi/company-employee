@@ -95,7 +95,7 @@ const handleColumnToggle = (columnKey: string, e: CheckboxChangeEvent) => {
             <label
                 v-for="column in hideableColumns"
                 :key="column.key"
-                class="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100"
+                class="flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-gray-100"
                 @click.stop
             >
                 <Checkbox

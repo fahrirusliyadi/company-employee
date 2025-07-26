@@ -103,7 +103,7 @@ const handleTableChange: TableProps['onChange'] = (
         :scroll="{ x: 'max-content' }"
         @change="handleTableChange"
     >
-        <template #bodyCell="{ column, text, record }">
+        <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'company'">
                 <ButtonLink
                     v-if="record.company"

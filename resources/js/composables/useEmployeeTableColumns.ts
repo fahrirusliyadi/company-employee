@@ -1,7 +1,7 @@
+import { usePermissions } from '@/composables/usePermissions';
 import type { Employee, EmployeeFilters, PaginatedData } from '@/types';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 import { computed, Ref, type ComputedRef } from 'vue';
-import { usePermissions } from '@/composables/usePermissions';
 
 /**
  * Composable for employee table columns configuration.

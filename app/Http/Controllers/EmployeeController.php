@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\EmployeeCollection;
-use App\Models\Employee;
+use App\Exceptions\ApplicationException;
 use App\Http\Requests\Employee\EmployeeIndexRequest;
 use App\Http\Requests\Employee\EmployeeStoreRequest;
 use App\Http\Requests\Employee\EmployeeUpdateRequest;
-use App\Exceptions\ApplicationException;
 use App\Http\Resources\CompanyResource;
+use App\Http\Resources\EmployeeCollection;
 use App\Models\Company;
+use App\Models\Employee;
 use App\Notifications\Company\EmployeeAdded;
 use Inertia\Inertia;
 
@@ -19,7 +18,6 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the employees.
      *
-     * @param  \App\Http\Requests\Employee\EmployeeIndexRequest  $request
      * @return \Inertia\Response
      */
     public function index(EmployeeIndexRequest $request)
@@ -54,9 +52,9 @@ class EmployeeController extends Controller
         $perPage = $request->input('per_page', 10);
 
         return Inertia::render('Employee/Index', [
-            'employees' => fn() => new EmployeeCollection($query->paginate($perPage)),
+            'employees' => fn () => new EmployeeCollection($query->paginate($perPage)),
             'filters' => $request->only(['page', 'per_page', 'search', 'sort_by', 'sort_direction', 'company_id']),
-            'selected_company' => fn() => $this->getSelectedCompany($request),
+            'selected_company' => fn () => $this->getSelectedCompany($request),
         ]);
     }
 
@@ -73,8 +71,8 @@ class EmployeeController extends Controller
     /**
      * Store a newly created employee in storage.
      *
-     * @param  \App\Http\Requests\Employee\EmployeeStoreRequest  $request
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \App\Exceptions\ApplicationException
      */
     public function store(EmployeeStoreRequest $request)
@@ -93,7 +91,6 @@ class EmployeeController extends Controller
     /**
      * Display the specified employee.
      *
-     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
     public function show(Employee $employee)
@@ -104,7 +101,6 @@ class EmployeeController extends Controller
     /**
      * Show the form for editing the specified employee.
      *
-     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
     public function edit(Employee $employee)
@@ -115,9 +111,8 @@ class EmployeeController extends Controller
     /**
      * Update the specified employee in storage.
      *
-     * @param  \App\Http\Requests\Employee\EmployeeUpdateRequest  $request
-     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \App\Exceptions\ApplicationException
      */
     public function update(EmployeeUpdateRequest $request, Employee $employee)
@@ -135,8 +130,8 @@ class EmployeeController extends Controller
     /**
      * Remove the specified employee from storage.
      *
-     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \App\Exceptions\ApplicationException
      */
     public function destroy(Employee $employee)
@@ -154,14 +149,12 @@ class EmployeeController extends Controller
     /**
      * Get the selected company for viewing details.
      * Uses separate query to avoid unnecessary loading of media data since it's not needed in the table.
-     *
-     * @param  \App\Http\Requests\Employee\EmployeeIndexRequest  $request
-     * @return \App\Http\Resources\CompanyResource|null
      */
     private function getSelectedCompany(EmployeeIndexRequest $request): ?CompanyResource
     {
         $companyId = $request->input('view_company_id');
         $company = $companyId ? Company::with('media')->find($companyId) : null;
+
         return $company ? CompanyResource::make($company) : null;
     }
 }

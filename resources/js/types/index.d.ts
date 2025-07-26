@@ -14,6 +14,15 @@ export type PageProps<
     };
 };
 
+export type GuestPageProps<
+    T extends Record<string, unknown> = Record<string, unknown>,
+> = T & {
+    auth: {
+        user: User | null;
+        permissions: string[];
+    };
+};
+
 export interface PaginationLink {
     url: string | null;
     label: string;

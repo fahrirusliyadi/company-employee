@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Company;
 
-use App\Http\Requests\Company\CompanyRequest;
 use Illuminate\Validation\Rule;
 
 class CompanyUpdateRequest extends CompanyRequest

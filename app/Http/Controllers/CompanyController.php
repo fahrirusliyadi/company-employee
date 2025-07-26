@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\CompanyCollection;
-use App\Models\Company;
+use App\Exceptions\ApplicationException;
 use App\Http\Requests\Company\CompanyIndexRequest;
 use App\Http\Requests\Company\CompanyStoreRequest;
 use App\Http\Requests\Company\CompanyUpdateRequest;
-use App\Exceptions\ApplicationException;
+use App\Http\Resources\CompanyCollection;
+use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -17,7 +16,6 @@ class CompanyController extends Controller
     /**
      * Display a listing of the companies.
      *
-     * @param  \App\Http\Requests\Company\CompanyIndexRequest  $request
      * @return \Inertia\Response
      */
     public function index(CompanyIndexRequest $request)
@@ -64,8 +62,8 @@ class CompanyController extends Controller
     /**
      * Store a newly created company in storage.
      *
-     * @param  \App\Http\Requests\Company\CompanyStoreRequest  $request
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \App\Exceptions\ApplicationException
      */
     public function store(CompanyStoreRequest $request)
@@ -89,7 +87,6 @@ class CompanyController extends Controller
     /**
      * Display the specified company.
      *
-     * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
     public function show(Company $company)
@@ -100,7 +97,6 @@ class CompanyController extends Controller
     /**
      * Show the form for editing the specified company.
      *
-     * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
     public function edit(Company $company)
@@ -111,9 +107,8 @@ class CompanyController extends Controller
     /**
      * Update the specified company in storage.
      *
-     * @param  \App\Http\Requests\Company\CompanyUpdateRequest  $request
-     * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \App\Exceptions\ApplicationException
      */
     public function update(CompanyUpdateRequest $request, Company $company)
@@ -138,8 +133,8 @@ class CompanyController extends Controller
     /**
      * Remove the specified company from storage.
      *
-     * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \App\Exceptions\ApplicationException
      */
     public function destroy(Company $company)

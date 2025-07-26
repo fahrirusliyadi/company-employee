@@ -12,7 +12,6 @@ class CompanyController extends Controller
     /**
      * Get company options for select components.
      *
-     * @param  \App\Http\Requests\Internal\Company\CompanyIndexRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function options(CompanyIndexRequest $request)

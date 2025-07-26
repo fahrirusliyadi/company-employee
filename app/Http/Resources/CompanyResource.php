@@ -29,6 +29,7 @@ class CompanyResource extends JsonResource
             'website' => $this->website,
             'logo' => $this->whenLoaded('media', function () {
                 $logo = $this->getFirstMedia('logo');
+
                 return $logo
                     ? [
                         'url' => $logo->getUrl(),

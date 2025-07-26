@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { useFlashMessages } from '@/composables/useFlashMessages';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import { useFlashMessages } from '@/composables/useFlashMessages';
+import { Link } from '@inertiajs/vue3';
 
 // Initialize flash message handling
 useFlashMessages();
@@ -13,7 +13,9 @@ useFlashMessages();
     >
         <div>
             <Link href="/">
-                <ApplicationLogo class="h-16 w-auto fill-current text-gray-500" />
+                <ApplicationLogo
+                    class="h-16 w-auto fill-current text-gray-500"
+                />
             </Link>
         </div>
 

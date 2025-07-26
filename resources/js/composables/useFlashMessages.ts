@@ -46,7 +46,7 @@ export function useFlashMessages() {
         () => page.props.flash,
         () => {
             handleFlashMessages();
-        }
+        },
     );
 
     /**

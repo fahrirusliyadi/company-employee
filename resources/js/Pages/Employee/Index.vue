@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { PlusOutlined } from '@ant-design/icons-vue';
-import { Head, router } from '@inertiajs/vue3';
-import { debounce } from 'lodash';
-import { ref, watch, computed } from 'vue';
 import ColumnVisibilitySelector from '@/Components/ColumnVisibilitySelector.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useEmployeeTableColumns } from '@/composables/useEmployeeTableColumns';
 import { usePermissions } from '@/composables/usePermissions';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { Company, Employee, EmployeeFilters, PaginatedData } from '@/types';
+import type {
+    Company,
+    Employee,
+    EmployeeFilters,
+    PaginatedData,
+} from '@/types';
+import { PlusOutlined } from '@ant-design/icons-vue';
+import { Head, router } from '@inertiajs/vue3';
+import { debounce } from 'lodash';
+import { computed, ref, watch } from 'vue';
+import CompanyDetail from './Partials/CompanyDetail.vue';
+import DeleteEmployeeConfirmation from './Partials/DeleteEmployeeConfirmation.vue';
 import EmployeeForm from './Partials/EmployeeForm.vue';
 import EmployeeTable from './Partials/EmployeeTable.vue';
-import DeleteEmployeeConfirmation from './Partials/DeleteEmployeeConfirmation.vue';
-import CompanyDetail from './Partials/CompanyDetail.vue';
-import { useEmployeeTableColumns } from '@/composables/useEmployeeTableColumns';
 
 /**
  * Props for the Employee Index component.
@@ -42,7 +47,14 @@ const isDeleteConfirmationOpen = ref(false);
 /** Visibility state for the company detail modal. */
 const isCompanyDetailOpen = ref(!!props.selected_company);
 /** Array of visible column keys for the employee table. */
-const visibleColumns = ref(['index', 'name', 'company', 'email', 'phone', 'actions']);
+const visibleColumns = ref([
+    'index',
+    'name',
+    'company',
+    'email',
+    'phone',
+    'actions',
+]);
 /** Use permissions composable to check user permissions. */
 const { hasPermission } = usePermissions();
 /** Use employee table columns composable to get column definitions. */
@@ -145,14 +157,18 @@ const handleEmployeeFormClose = () => {
  * @param {Employee} employee - The employee object whose company is to be viewed.
  */
 const handleTableRowCompanyDetail = (employee: Employee) => {
-    router.get(route('employees.index'), {
-        ...props.filters,
-        view_company_id: employee.company_id,
-    }, {
-        only: ['selected_company'],
-        preserveState: true,
-        preserveScroll: true,
-    })
+    router.get(
+        route('employees.index'),
+        {
+            ...props.filters,
+            view_company_id: employee.company_id,
+        },
+        {
+            only: ['selected_company'],
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 /**
@@ -161,13 +177,17 @@ const handleTableRowCompanyDetail = (employee: Employee) => {
  */
 const handleCompanyDetailClose = () => {
     isCompanyDetailOpen.value = false;
-    router.get(route('employees.index'), {
-        ...props.filters,
-    }, {
-        only: [],
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        route('employees.index'),
+        {
+            ...props.filters,
+        },
+        {
+            only: [],
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 /**
@@ -180,9 +200,12 @@ watch(search, handleSearch);
  * Watches the selected_company prop to update the company detail modal visibility.
  * If selected_company is set, opens the company detail modal; otherwise, closes it.
  */
-watch(() => props.selected_company, (newCompany) => {
-    isCompanyDetailOpen.value = !!newCompany;
-});
+watch(
+    () => props.selected_company,
+    (newCompany) => {
+        isCompanyDetailOpen.value = !!newCompany;
+    },
+);
 </script>
 
 <template>

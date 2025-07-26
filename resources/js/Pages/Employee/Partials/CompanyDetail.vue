@@ -33,7 +33,7 @@ defineEmits<Emits>();
     <Modal centered :footer="null" :open="isOpen" @cancel="$emit('close')">
         <div class="space-y-6">
             <div class="space-y-1">
-                <h2 class="text-lg font-medium text-gray-900 me-8">
+                <h2 class="me-8 text-lg font-medium text-gray-900">
                     {{ company?.name }}
                 </h2>
 
@@ -42,7 +42,7 @@ defineEmits<Emits>();
                 </p>
             </div>
 
-            <div class="flex flex-col sm:items-center gap-4 sm:flex-row">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <div class="shrink-0">
                     <div class="mx-auto max-h-[140px] max-w-[140px]">
                         <img

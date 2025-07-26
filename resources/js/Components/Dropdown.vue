@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Dropdown as ADropdown } from 'ant-design-vue';
 import type { DropdownProps } from 'ant-design-vue';
+import { Dropdown as ADropdown } from 'ant-design-vue';
+import { computed } from 'vue';
 
 const props = withDefaults(
     defineProps<{

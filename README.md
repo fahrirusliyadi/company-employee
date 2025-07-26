@@ -52,6 +52,10 @@ This runs Laravel server, queue worker, logs, and Vite dev server concurrently.
 
 #### 5. Access the application:
 http://localhost:8000
+  
+#### Default Admin Role
+
+By default, the first user to register in the application will automatically be assigned the `admin` role.
 
 ## About Laravel
 
